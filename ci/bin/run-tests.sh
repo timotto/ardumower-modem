@@ -26,11 +26,11 @@ go build -o "$target/validate" ./cmd/validate
 cd -
 
 # task test
-flash esp_modem_test
+flash ardumower-modem_test
 "${target}/serial_test_runner" ${SERIAL_PORT}
 
 # task validate
-flash esp_modem_sim
+flash ardumower-modem_sim
 
 validate_retry() {
   for x in $(seq 1 3)
