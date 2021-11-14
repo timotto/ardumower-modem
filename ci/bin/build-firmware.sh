@@ -23,7 +23,7 @@ arduino-cli lib install ArduinoJson
 arduino-cli lib install MQTT
 arduino-cli lib install NimBLE-Arduino
 
-cd esp_modem
+cd ardumower-modem
 
 semver-bumper \
   -o "$temp/release-version" \
@@ -61,8 +61,8 @@ cpy() {
   for file in bin elf partitions.bin
   do
     cp -v \
-      "build/dist/${variant}/esp_modem.ino.${file}" \
-      "${temp}/esp_modem${target}.${file}"
+      "build/dist/${variant}/ardumower-modem.ino.${file}" \
+      "${temp}/ardumower-modem${target}.${file}"
   done
 }
 
