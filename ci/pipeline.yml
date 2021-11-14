@@ -278,7 +278,6 @@ jobs:
       tag: rc-artifacts/release-version
       tag_prefix: v
       body: rc-artifacts/release-notes
-      commitish: rc-artifacts/commitish
       globs:
       - rc-artifacts/ardumower-modem.bin
 
