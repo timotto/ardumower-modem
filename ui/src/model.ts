@@ -65,3 +65,7 @@ export interface Info {
   git_tag: string;
   uptime: number
 }
+
+export interface Status {
+  relay_connected: boolean
+}

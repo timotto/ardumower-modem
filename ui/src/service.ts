@@ -1,7 +1,8 @@
-import type { Info, Settings } from './model'
+import type { Info, Settings, Status } from './model'
 import { SaveSuccess } from './stores/success'
 import { Invalid } from './stores/invalid'
 import { InfoStore } from './stores/info'
+import { StatusStore } from './stores/status'
 import { Error as ErrorStore } from './stores/error'
 
 const apiPath = (p: string) => `/api/modem/${p}`
@@ -58,6 +59,7 @@ class SettingsServiceClass {
   private async loadFirstInfo(): Promise<void> {
     try {
       await info()
+      await status()
     } catch (err) {
       ErrorStore.set(err)
     }
@@ -94,6 +96,24 @@ const info = async (timeout: number = 5000): Promise<Info> => {
     return info
   } catch (err) {
     throw new ServiceError("get modem info", { action: "decode", error: err.message }, 0, "")
+  }
+}
+
+const status = async (timeout: number = 5000): Promise<Status> => {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
+
+  const res = await fetch(apiPath('status'), { signal: controller.signal })
+  clearTimeout(id);
+
+  await assertOk(res, 'get modem status')
+  try {
+    const status = await res.json()
+    StatusStore.set(status)
+
+    return status
+  } catch (err) {
+    throw new ServiceError("get modem status", { action: "decode", error: err.message }, 0, "")
   }
 }
 
@@ -184,7 +204,7 @@ export class ServiceError extends Error {
   }
 }
 
-export const InfoService = { info }
+export const InfoService = { info, status }
 
 export const SettingsService = new SettingsServiceClass();
 
