@@ -3,6 +3,7 @@
 #define DEBUG_LEVEL DBG
 #include "../src/log.h"
 #include "test_helpers.h"
+#include "backoff_test.h"
 #include "checksum_test.h"
 #include "encrypt_test.h"
 #include "http_adapter_test.h"
