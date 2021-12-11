@@ -18,6 +18,7 @@ UiAdapter::UiAdapter(Api::Api &api,
 void UiAdapter::begin()
 {
   _server.on("/api/modem/info", HTTP_GET, std::bind(&UiAdapter::handleApiGetModemInfo, this, std::placeholders::_1));
+  _server.on("/api/modem/status", HTTP_GET, std::bind(&UiAdapter::handleApiGetModemStatus, this, std::placeholders::_1));
 
   _server.on("/api/modem/settings", HTTP_GET, std::bind(&UiAdapter::handleApiGetModemSettings, this, std::placeholders::_1));
   _server.on("/api/modem/settings/reset", HTTP_POST, std::bind(&UiAdapter::handleApiResetModemSettings, this, std::placeholders::_1));
@@ -91,6 +92,18 @@ void UiAdapter::handleApiGetModemInfo(AsyncWebServerRequest *request)
   AsyncJsonResponse *response = new AsyncJsonResponse();
   const JsonObject &root = response->getRoot();
   ArduMower::Modem::Settings::Properties.marshal(root);
+  response->setLength();
+  request->send(response);
+}
+
+void UiAdapter::handleApiGetModemStatus(AsyncWebServerRequest *request)
+{
+  if (!auth(request))
+    return;
+
+  AsyncJsonResponse *response = new AsyncJsonResponse();
+  const JsonObject &root = response->getRoot();
+  root["relay_connected"] = _api.relay->isConnected();
   response->setLength();
   request->send(response);
 }

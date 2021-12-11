@@ -109,6 +109,14 @@ const texts = {
             invalidText: "The PIN cannot be empty and must be 4 - 6 digits long"
           }
         },
+        relay: {
+          enabled: {
+            label: "Connect to your ArduMower through a Relay server"
+          },
+          url: {
+            label: "WebSocket URL of the relay, eg wss://fluffy-unicorn-8422.relay.example.com"
+          },
+        },
         mqtt: {
           enabled: {
             label: "Enabled"

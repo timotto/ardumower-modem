@@ -26,6 +26,10 @@ export namespace Settings {
     pin: number
     has_pin: boolean
   }
+  export interface Relay {
+    enabled: boolean
+    url: string
+  }
   export interface Mqtt {
     enabled: boolean
     server: string
@@ -50,6 +54,7 @@ export interface Settings {
   web: Settings.Web
   wifi: Settings.WiFi
   bluetooth: Settings.Bluetooth
+  relay: Settings.Relay
   mqtt: Settings.Mqtt
   prometheus: Settings.Prometheus
 }

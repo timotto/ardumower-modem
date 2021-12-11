@@ -18,15 +18,25 @@ namespace ArduMower
         virtual void clearPairings() = 0;
       };
 
+      class Relay {
+      public:
+        virtual bool isConnected() = 0;
+      };
+
       class Api
       {
       public:
         OS & os;
         Bluetooth * ble;
+        Relay * relay;
 
         Api(OS & _os) : os(_os) {};
 
-        void begin(Bluetooth * _ble) { ble = _ble; }
+        void begin(Bluetooth * _ble, Relay * _relay)
+        {
+          ble = _ble;
+          relay = _relay;
+        }
       };
     }
   }
