@@ -173,6 +173,7 @@ bool MqttAdapter::connect(const uint32_t now)
   if (client.connected())
   {
     last_connected = now;
+    backoff.reset();
     return true;
   }
 
@@ -187,7 +188,7 @@ bool MqttAdapter::connect(const uint32_t now)
   static uint32_t next_time = 0;
   if (now < next_time)
     return false;
-  next_time = now + 1000;
+  next_time = now + backoff.next();
 
   Log(DBG, "MqttAdapter::connect");
 

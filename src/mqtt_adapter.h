@@ -1,6 +1,7 @@
 #ifndef _MQTT_ADAPTER_H
 #define _MQTT_ADAPTER_H
 
+#include "backoff.h"
 #include "mqtt_ha.h"
 #include "router.h"
 #include "domain.h"
@@ -26,6 +27,7 @@ namespace ArduMower
 
       WiFiClient net;
       MQTTClient client;
+      ArduMower::Util::Backoff backoff;
 
       void onMqttMessage(String topic, String payload);
       bool connect(const uint32_t now);
@@ -46,7 +48,7 @@ namespace ArduMower
             ha(HomeAssistant::Adapter(
                 _settings, _source, _cmd,
                 std::bind(&MqttAdapter::publishTo, this, std::placeholders::_1, std::placeholders::_2))),
-            client(MQTTClient(2048))
+            client(MQTTClient(2048)), backoff(ArduMower::Util::Backoff(1000, 6000, 1.2))
       {
       }
 
