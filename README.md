@@ -62,6 +62,7 @@ Building the web interface requires Node JS. The tools to package the web interf
 Most libraries are available via the Arduino Library Manager:
 - [AUnit](https://github.com/bxparks/AUnit)
 - [ArduinoJson](https://arduinojson.org/)
+- [ArduinoWebsockets](https://github.com/gilmaimon/ArduinoWebsockets)
 - [MQTT](https://github.com/256dpi/arduino-mqtt)
 - [NimBLE-Arduino](https://github.com/h2zero/NimBLE-Arduino)
 

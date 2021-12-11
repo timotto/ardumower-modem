@@ -20,6 +20,7 @@ cp -r lib/* $HOME/Arduino/libraries/
 
 arduino-cli lib install AUnit
 arduino-cli lib install ArduinoJson
+arduino-cli lib install ArduinoWebsockets
 arduino-cli lib install MQTT
 arduino-cli lib install NimBLE-Arduino
 
