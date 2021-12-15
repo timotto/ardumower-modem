@@ -26,14 +26,21 @@ namespace ArduMower
 
       String sendToRelay;
       String sendToMower;
+      uint32_t lastConnect, lastPing, lastPong;
+      float rtt;
+      int _connectionCount;
+      float _connectionDuration;
 
       bool loopConnection();
       void loopTransfer();
+      void loopPing();
 
       void onMessageCallback(websockets::WebsocketsMessage message);
       void onEventsCallback(websockets::WebsocketsEvent event, String data);
 
       unsigned int writeCount(char *buffer, unsigned int size);
+
+      uint32_t pingInterval();
 
     public:
       RelayAdapter(Settings::Settings &s, Router &r);
@@ -42,6 +49,10 @@ namespace ArduMower
       void loop();
 
       virtual bool isConnected() override;
+      virtual float pingRTT() override;
+      virtual int connectionCount() override;
+      virtual uint32_t connectionTime() override;
+      virtual float connectionDuration() override;
     };
   }
 }

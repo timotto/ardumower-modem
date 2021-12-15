@@ -21,6 +21,10 @@ namespace ArduMower
       class Relay {
       public:
         virtual bool isConnected() = 0;
+        virtual float pingRTT() = 0;
+        virtual int connectionCount() = 0;
+        virtual uint32_t connectionTime() = 0;
+        virtual float connectionDuration() = 0;
       };
 
       class Api

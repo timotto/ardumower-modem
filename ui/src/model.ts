@@ -67,5 +67,9 @@ export interface Info {
 }
 
 export interface Status {
+  uptime: number
   relay_connected: boolean
+  relay_connect_count: number
+  relay_connect_time: number
+  relay_rtt: number
 }

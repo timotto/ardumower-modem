@@ -53,6 +53,7 @@ const char * _t_has_ap_psk = "has_ap_psk";
 const char * _t_has_password = "has_password";
 const char * _t_has_pin = "has_pin";
 const char * _t_url = "url";
+const char * _t_ping_interval = "ping_interval";
 
 General::General() : name("Ardumower"), encryption(true), password(123456) {}
 
@@ -447,12 +448,14 @@ void Relay::marshal(const JsonObject &o) const
 {
   o[_t_enabled] = enabled;
   o[_t_url] = url;
+  o[_t_ping_interval] = pingInterval;
 }
 
 bool Relay::unmarshal(const JsonObject &o)
 {
   enabled = o[_t_enabled];
   url = o[_t_url].as<String>();
+  pingInterval = o[_t_ping_interval];
 
   return true;
 }

@@ -34,6 +34,10 @@ public:
 
   virtual void clearPairings() override;
   virtual bool isConnected() override;
+  virtual float pingRTT() override;
+  virtual int connectionCount() override;
+  virtual uint32_t connectionTime() override;
+  virtual float connectionDuration() override;
 };
 
 testF(TestUiAdapter, get_root_returns_index_html_gz)
@@ -276,4 +280,24 @@ void TestUiAdapter::clearPairings()
 bool TestUiAdapter::isConnected()
 {
   return isConnectedValue;
+}
+
+float TestUiAdapter::pingRTT()
+{
+  return 0;
+}
+
+int TestUiAdapter::connectionCount()
+{
+  return 0;
+}
+
+uint32_t TestUiAdapter::connectionTime()
+{
+  return 0;
+}
+
+float TestUiAdapter::connectionDuration()
+{
+  return 0;
 }
