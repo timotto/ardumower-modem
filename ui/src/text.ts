@@ -116,6 +116,12 @@ const texts = {
           url: {
             label: "WebSocket URL of the relay, eg wss://fluffy-unicorn-8422.relay.example.com"
           },
+          username: {
+            label: "Username"
+          },
+          password: {
+            label: "Password"
+          },
         },
         mqtt: {
           enabled: {

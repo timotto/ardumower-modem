@@ -24,6 +24,19 @@
       bind:value={settings.url}
       bind:original={original.url}
     />
+    <TextSetting
+      label="Username"
+      key="mqtt.username"
+      bind:value={settings.username}
+      bind:original={original.username}
+    />
+    <TextSetting
+      label="Password"
+      key="mqtt.password"
+      kind="password"
+      bind:value={settings.password}
+      bind:original={original.password}
+    />
     <RelayStatus />
   </svelte:fragment>
 </Group>

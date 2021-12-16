@@ -31,6 +31,7 @@ namespace ArduMower
       int _connectionCount;
       float _connectionDuration;
 
+      void setupAuthorizationHeader();
       bool loopConnection();
       void loopTransfer();
       void loopPing();

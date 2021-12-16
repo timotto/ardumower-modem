@@ -448,6 +448,8 @@ void Relay::marshal(const JsonObject &o) const
 {
   o[_t_enabled] = enabled;
   o[_t_url] = url;
+  o[_t_username] = username;
+  o[_t_password] = password;
   o[_t_ping_interval] = pingInterval;
 }
 
@@ -455,6 +457,9 @@ bool Relay::unmarshal(const JsonObject &o)
 {
   enabled = o[_t_enabled];
   url = o[_t_url].as<String>();
+  username = o[_t_username].as<String>();
+  if (containsAndHas(o, _t_password, _t_has_password))
+    password = o[_t_password].as<String>();
   pingInterval = o[_t_ping_interval];
 
   return true;
@@ -462,7 +467,7 @@ bool Relay::unmarshal(const JsonObject &o)
 
 void Relay::stripSecrets(const JsonObject &o) const
 {
-
+  stripSecret(o, _t_password, _t_has_password);
 }
 
 bool MQTT::valid(String &invalid) const

@@ -1,6 +1,10 @@
 #include "relay_adapter.h"
 #include "log.h"
 #include "trust.h"
+extern "C"
+{
+#include "crypto/base64.h"
+}
 
 using namespace ArduMower::Modem;
 using namespace ArduMower::Util;
@@ -23,7 +27,7 @@ RelayAdapter::RelayAdapter(Settings::Settings &s, Router &r)
                             std::placeholders::_1,
                             std::placeholders::_2))),
       connected(false), backoff(Backoff(backoff_min, backoff_max, backoff_factor)),
-      lastConnect(0), lastPing(0), lastPong(0), 
+      lastConnect(0), lastPing(0), lastPong(0),
       rtt(0), _connectionCount(0), _connectionDuration(0)
 {
   if (!settings.relay.enabled)
@@ -39,6 +43,25 @@ void RelayAdapter::begin()
 
   client.onMessage(std::bind(&RelayAdapter::onMessageCallback, this, std::placeholders::_1));
   client.onEvent(std::bind(&RelayAdapter::onEventsCallback, this, std::placeholders::_1, std::placeholders::_2));
+  setupAuthorizationHeader();
+}
+
+void RelayAdapter::setupAuthorizationHeader()
+{
+  if (settings.relay.username == "" || settings.relay.password == "")
+    return;
+
+  String plain = settings.relay.username + ":" + settings.relay.password;
+  size_t n;
+  unsigned char *encoded = base64_encode((const unsigned char *)plain.c_str(), plain.length(), &n);
+
+  // why does base64_encode append a single "\r" / 0x0a character?
+  if (n > 0)
+    encoded[n - 1] = 0;
+
+  String authValue = "Basic " + String((char *)encoded);
+  client.addHeader("Authorization", authValue);
+  free(encoded);
 }
 
 void RelayAdapter::loop()

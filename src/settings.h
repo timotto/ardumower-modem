@@ -115,6 +115,8 @@ namespace ArduMower
 
         bool enabled;
         String url;
+        String username;
+        String password;
         uint32_t pingInterval;
 
         bool valid(String & invalid) const;

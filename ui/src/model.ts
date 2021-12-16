@@ -29,6 +29,9 @@ export namespace Settings {
   export interface Relay {
     enabled: boolean
     url: string
+    username: string
+    password: string
+    has_password: boolean
   }
   export interface Mqtt {
     enabled: boolean
