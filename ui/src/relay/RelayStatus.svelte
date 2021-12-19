@@ -4,10 +4,24 @@
   import { StatusStore } from "../stores/status";
   import { InfoService } from "../service";
   import ConnectionStatus from "./ConnectionStatus.svelte";
+  import { onDestroy } from "svelte";
 
   function refresh() {
     InfoService.status();
   }
+
+  function refreshFast() {
+    if ($StatusStore.relay_connected) return;
+    refresh();
+  }
+
+  let pollerTimerSlowId = setInterval(refresh, 20000);
+  let pollerTimerFastId = setInterval(refreshFast, 3000);
+
+  onDestroy(() => {
+    clearInterval(pollerTimerSlowId);
+    clearInterval(pollerTimerFastId);
+  });
 </script>
 
 <main>

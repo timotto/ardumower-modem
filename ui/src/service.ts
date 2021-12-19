@@ -123,7 +123,10 @@ const modemReboot = async (before: Info, timeout: number = 10000) => {
   while (millis() < limit) {
     try {
       const now = await info(1000);
-      if (now.uptime < before.uptime) return;
+      if (now.uptime < before.uptime) {
+        await status();
+        return;
+      }
     } catch (err) {
       console.log("await reboot", err);
     }

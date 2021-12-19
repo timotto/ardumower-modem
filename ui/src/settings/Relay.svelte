@@ -5,7 +5,6 @@
   import Group from "./Group.svelte";
   import RelayStatus from "../relay/RelayStatus.svelte";
 
-  export let allSettings: Settings;
   export let settings: Settings.Relay;
   export let original: Settings.Relay;
 </script>
