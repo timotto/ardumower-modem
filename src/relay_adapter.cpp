@@ -44,6 +44,8 @@ void RelayAdapter::begin()
   client.onMessage(std::bind(&RelayAdapter::onMessageCallback, this, std::placeholders::_1));
   client.onEvent(std::bind(&RelayAdapter::onEventsCallback, this, std::placeholders::_1, std::placeholders::_2));
   setupAuthorizationHeader();
+  client.addHeader("Ardumower-Relay-Client-Robot-Timeout", String(1000));
+  client.addHeader("Ardumower-Relay-Client-Ping-Interval", String(settings.relay.pingInterval));
 }
 
 void RelayAdapter::setupAuthorizationHeader()
@@ -123,12 +125,34 @@ bool RelayAdapter::loopConnection()
 void RelayAdapter::loopTransfer()
 {
   if (sendToMower != "" &&
-      router.send(sendToMower, [&](String res, int err)
-                  { sendToRelay = res + "\r\n"; }))
+      router.send(
+          sendToMower,
+          std::bind(&RelayAdapter::onRouterResponse, this, std::placeholders::_1, std::placeholders::_2)))
     sendToMower = "";
 
   if (sendToRelay != "" && client.send(sendToRelay))
     sendToRelay = "";
+}
+
+void RelayAdapter::onRouterResponse(String res, int err)
+{
+  switch (err)
+  {
+  case ArduMower::Modem::XferError::SUCCESS:
+    sendToRelay = res + "\r\n";
+    break;
+  
+  case ArduMower::Modem::XferError::TIMEOUT:
+    Log(ERR, "RelayAdapter::onRouterResponse() - timeout");
+    // no response causes timeout error in relay server
+    break;
+  
+  default:
+    Log(ERR, "RelayAdapter::onRouterResponse() - error %d", err);
+    // there is no way to signal errors as the transport is transparent
+    // fallback to timeout error in relay server
+    break;
+  }
 }
 
 void RelayAdapter::loopPing()

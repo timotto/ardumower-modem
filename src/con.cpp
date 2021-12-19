@@ -3,6 +3,7 @@
 #include <ArduinoJson.h>
 #include "con.h"
 #include "git_version.h"
+#include "../test/helper/fake_ardumower_h.h"
 
 using namespace ArduMower::Modem;
 
@@ -80,6 +81,12 @@ void Console::loopInput()
     setEcho(true);
   else if (line == "echo off")
     setEcho(false);
+  else if (line == "fake on")
+    setFakeEnabled(true);
+  else if (line == "fake off")
+    setFakeEnabled(false);
+  else if (line == "fake timeout")
+    setFakeTimeout();
   else
     printUnknown(line);
 }
@@ -112,6 +119,35 @@ void Console::setEcho(bool enabled)
         });
   else
     io.printf("Echo %s\r\n", enabled ? "ON" : "OFF");
+}
+
+void Console::setFakeEnabled(bool enabled) {
+  FakeArduMower.active = enabled;
+  if (json)
+    printJson(
+        [&](const JsonObject &o)
+        {
+          o["result"] = "ok";
+          o["kind"] = "fake";
+          o["fake"] = enabled;
+        });
+  else
+    io.printf("Fake %s\r\n", enabled ? "ON" : "OFF");
+}
+
+void Console::setFakeTimeout()
+{
+  FakeArduMower.fakeTimeoutNext = true;
+  if (json)
+    printJson(
+        [&](const JsonObject &o)
+        {
+          o["result"] = "ok";
+          o["kind"] = "fake_timeout";
+          o["fake_timeout"] = true;
+        });
+  else
+    io.printf("Fake timeout ON\r\n");
 }
 
 void Console::printInfo()
@@ -422,6 +458,8 @@ void Console::printHelp()
       "status   show runtime status\r\n"
       "json     output in json\r\n"
       "text     output in text\r\n"
+      "fake on|off      enable/disable fake\r\n"
+      "fake timeout     fake response timeout to next ArduMower request\r\n"
       "restart modem    restart the modem\r\n"
       "reset settings   reset modem settings to default values\r\n"
       "dump settings    print modem settings to console\r\n"

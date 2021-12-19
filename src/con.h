@@ -25,6 +25,8 @@ namespace ArduMower
 
       void setJsonOutput(bool enabled);
       void setEcho(bool enabled);
+      void setFakeEnabled(bool enabled);
+      void setFakeTimeout();
 
       void printHelp();
       void printInfo();

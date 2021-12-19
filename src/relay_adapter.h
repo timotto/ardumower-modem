@@ -36,6 +36,8 @@ namespace ArduMower
       void loopTransfer();
       void loopPing();
 
+      void onRouterResponse(String res, int err);
+
       void onMessageCallback(websockets::WebsocketsMessage message);
       void onEventsCallback(websockets::WebsocketsEvent event, String data);
 
