@@ -41,6 +41,12 @@ type (
 				Ip      string `json:"ip"`
 			} `json:"sta"`
 		} `json:"wifi"`
+		Relay struct {
+			Connected          bool    `json:"connected"`
+			Ping               float64 `json:"ping"`
+			ConnectionCount    int     `json:"connections"`
+			ConnectionDuration int     `json:"session"`
+		} `json:"relay"`
 	}
 
 	ModemSettings struct {

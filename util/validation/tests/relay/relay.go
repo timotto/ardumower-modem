@@ -92,8 +92,7 @@ func ValidationSuite(bed *testbed.Testbed) bool {
 			}
 			averageErrorRate /= float64(parallelism)
 
-			// less than 1 %
-			Expect(averageErrorRate).To(BeNumerically("<=", 0.01))
+			Expect(averageErrorRate).To(BeNumerically("<=", 0.05))
 		})
 	})
 }

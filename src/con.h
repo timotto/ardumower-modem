@@ -3,6 +3,7 @@
 #include <functional>
 #include <Arduino.h>
 #include <ArduinoJson.h>
+#include "api.h"
 #include "reader.h"
 #include "settings.h"
 
@@ -14,6 +15,7 @@ namespace ArduMower
     {
     private:
       HardwareSerial &io;
+      Api::Api &api;
       Settings::Settings &settings;
       Reader input;
       bool echo;
@@ -42,11 +44,12 @@ namespace ArduMower
 
       void restartModem();
 
-      void printJson(std::function<void(const JsonObject & o)> fn);
+      void printJson(std::function<void(const JsonObject &o)> fn);
 
     public:
-      Console(HardwareSerial &_io, Settings::Settings &_settings)
-          : io(_io), settings(_settings), input("\r"), echo(true), prompt(true), expectSettings(false), json(false) {}
+      Console(HardwareSerial &_io, Api::Api &_api, Settings::Settings &_settings)
+          : io(_io), api(_api), settings(_settings),
+            input("\r"), echo(true), prompt(true), expectSettings(false), json(false) {}
 
       void begin();
       void loop();

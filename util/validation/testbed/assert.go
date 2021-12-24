@@ -92,6 +92,9 @@ func (b *Testbed) AssertRelay() (string, string, string, error) {
 			b.settings.Relay.Username != "" &&
 			b.settings.Relay.Password != ""
 	}
+	var checkConnection = func() bool {
+		return b.status.Relay.Connected
+	}
 
 	if !check() {
 		b.settings.Relay.Enabled = true
@@ -106,6 +109,15 @@ func (b *Testbed) AssertRelay() (string, string, string, error) {
 		if !check() {
 			return "", "", "", fmt.Errorf("failed to change web settings")
 		}
+	}
+
+	timeout := time.Now().Add(5 * time.Second)
+	for !checkConnection() {
+		if time.Now().After(timeout) {
+			return "", "", "", fmt.Errorf("timeout")
+		}
+		b.sendString("status\n")
+		time.Sleep(time.Second)
 	}
 
 	return b.settings.Relay.Url, b.settings.Relay.Username, b.settings.Relay.Password, nil

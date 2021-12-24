@@ -47,7 +47,7 @@ Wifi::Adapter wifiAdapter(settings);
 
 #ifdef ESP_MODEM_SIM
 // console is used during validation tests and enabled on simulator target only
-Console con(Serial, settings);
+Console con(Serial, api, settings);
 #endif
 
 WebServer webServer;
