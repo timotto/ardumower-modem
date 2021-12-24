@@ -43,7 +43,7 @@ func ValidationSuite(bed *testbed.Testbed) bool {
 		})
 
 		It("allows parallel communication", func() {
-			parallelism := 10
+			parallelism := 8
 			requestsPerInstance := 10
 
 			errorRates := make([]float64, parallelism)
@@ -92,8 +92,8 @@ func ValidationSuite(bed *testbed.Testbed) bool {
 			}
 			averageErrorRate /= float64(parallelism)
 
-			// less than 0.1 %
-			Expect(averageErrorRate).To(BeNumerically("<=", 0.001))
+			// less than 1 %
+			Expect(averageErrorRate).To(BeNumerically("<=", 0.01))
 		})
 	})
 }
