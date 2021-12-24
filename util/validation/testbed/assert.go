@@ -85,6 +85,32 @@ func (b *Testbed) AssertWebWithCredentials() (string, string, error) {
 	return b.settings.Web.Username, b.settings.Web.Password, nil
 }
 
+func (b *Testbed) AssertRelay() (string, string, string, error) {
+	var check = func() bool {
+		return b.settings.Relay.Enabled &&
+			b.settings.Relay.Url != "" &&
+			b.settings.Relay.Username != "" &&
+			b.settings.Relay.Password != ""
+	}
+
+	if !check() {
+		b.settings.Relay.Enabled = true
+		b.settings.Relay.Url = b.relayUrl
+		b.settings.Relay.Username = b.relayUser
+		b.settings.Relay.Password = b.relayPassword
+
+		if err := b.uploadSettings(); err != nil {
+			return "", "", "", err
+		}
+
+		if !check() {
+			return "", "", "", fmt.Errorf("failed to change web settings")
+		}
+	}
+
+	return b.settings.Relay.Url, b.settings.Relay.Username, b.settings.Relay.Password, nil
+}
+
 func (b *Testbed) assertUniqueName() error {
 	name := b.DeviceName()
 	if b.info.Name == name {

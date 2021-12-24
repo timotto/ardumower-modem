@@ -72,6 +72,13 @@ type (
 			Pin        int  `json:"pin"`
 		} `json:"bluetooth"`
 
+		Relay struct {
+			Enabled  bool   `json:"enabled"`
+			Url      string `json:"url"`
+			Username string `json:"username"`
+			Password string `json:"password"`
+		} `json:"relay"`
+
 		Mqtt struct {
 			Enabled         bool   `json:"enabled"`
 			Prefix          string `json:"prefix"`

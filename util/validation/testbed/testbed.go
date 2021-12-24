@@ -14,8 +14,13 @@ type (
 		serialPort string
 		staSsid    string
 		staPsk     string
-		out        chan []byte
-		started    bool
+
+		relayUrl      string
+		relayUser     string
+		relayPassword string
+
+		out     chan []byte
+		started bool
 
 		info     ModemInfo
 		status   ModemStatus
@@ -24,20 +29,27 @@ type (
 )
 
 func NewTestBed(serialPort string) (*Testbed, error) {
-	staSsid, ok := os.LookupEnv("VALIDATE_WIFI_STA_SSID")
-	if !ok {
-		return nil, fmt.Errorf("VALIDATE_WIFI_STA_SSID must be defined")
-	}
-	staPsk, ok := os.LookupEnv("VALIDATE_WIFI_STA_PSK")
-	if !ok {
-		return nil, fmt.Errorf("VALIDATE_WIFI_STA_PSK must be defined")
-	}
-
 	b := &Testbed{
 		serialPort: serialPort,
-		staSsid:    staSsid,
-		staPsk:     staPsk,
 		out:        make(chan []byte),
+	}
+
+	var err error
+	if b.staSsid, err = mustEnv("VALIDATE_WIFI_STA_SSID"); err != nil {
+		return nil, err
+	}
+	if b.staPsk, err = mustEnv("VALIDATE_WIFI_STA_PSK"); err != nil {
+		return nil, err
+	}
+
+	if b.relayUrl, err = mustEnv("VALIDATE_RELAY_SERVER_URL"); err != nil {
+		return nil, err
+	}
+	if b.relayUser, err = mustEnv("VALIDATE_RELAY_USERNAME"); err != nil {
+		return nil, err
+	}
+	if b.relayPassword, err = mustEnv("VALIDATE_RELAY_PASSWORD"); err != nil {
+		return nil, err
 	}
 
 	c := &serial.Config{Name: b.serialPort, Baud: 115200}
@@ -87,4 +99,12 @@ func (b *Testbed) sendString(data string) {
 
 func (b *Testbed) send(data []byte) {
 	b.out <- data
+}
+
+func mustEnv(key string) (string, error) {
+	if val, ok := os.LookupEnv(key); !ok {
+		return "", fmt.Errorf("%v must be defined", key)
+	} else {
+		return val, nil
+	}
 }

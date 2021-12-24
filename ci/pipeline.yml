@@ -233,6 +233,9 @@ jobs:
         SERIAL_PORT: /dev/ttyUSB0
         VALIDATE_WIFI_STA_SSID: ((test-wifi.ssid))
         VALIDATE_WIFI_STA_PSK: ((test-wifi.psk))
+        VALIDATE_RELAY_SERVER_URL: ((test-relay-server.url))
+        VALIDATE_RELAY_USERNAME: ((test-relay-server.username))
+        VALIDATE_RELAY_PASSWORD: ((test-relay-server.password))
       run: {path: ci/ci/bin/run-tests.sh}
 
 - name: rc
