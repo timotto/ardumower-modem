@@ -431,6 +431,19 @@ static bool validDnsName(const String &name)
   return true;
 }
 
+#include <lwip/sockets.h>
+static bool validIpAddress(const String &address)
+{
+  if (address == "")
+    return false;
+
+  struct sockaddr_in addr;
+  if (inet_pton(AF_INET, address.c_str(), &(addr.sin_addr)) == 0)
+    return false;
+
+  return true;
+}
+
 bool Relay::valid(String &invalid) const
 {
   // if (!enabled)
@@ -475,7 +488,7 @@ bool MQTT::valid(String &invalid) const
   if (!enabled)
     return true;
 
-  if (!validDnsName(server))
+  if (!(validDnsName(server) || validIpAddress(server)))
     invalid = "mqtt.server";
   else
     return true;
