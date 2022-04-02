@@ -206,9 +206,6 @@ test(settings_valid_mqtt)
   uut.mqtt.server = "192.168.2.3.4";
   assertFalse( uut.mqtt.valid(invalid) );
 
-  uut.mqtt.server = "192.168.2";
-  assertFalse( uut.mqtt.valid(invalid) );
-
   uut.mqtt.server = "some-server";
   assertTrue( uut.mqtt.valid(invalid) );
 
