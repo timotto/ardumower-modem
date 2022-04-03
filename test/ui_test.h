@@ -55,14 +55,14 @@ testF(TestUiAdapter, get_root_returns_index_html_gz)
 
 testF(TestUiAdapter, get_api_robot_desired_state)
 {
-  mockMower._desiredState.speed = 17.3;
+  mockMower._desiredState.speed = 17;
 
   http.begin(net, "http://localhost:8080/api/robot/desired_state");
   assertTrue(http.GET());
   String responseBody = http.getString();
 
   assertNotEqual(-1, responseBody.indexOf("speed"));
-  assertNotEqual(-1, responseBody.indexOf("17.3"));
+  assertNotEqual(-1, responseBody.indexOf("17"));
 }
 
 testF(TestUiAdapter, get_api_modem_info)
