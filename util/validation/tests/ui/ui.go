@@ -214,7 +214,7 @@ func ExpectResponseStatus(c *http.Client, req *http.Request, status int) {
 
 func httpClient() *http.Client {
 	cpy := &http.Client{}
-	cpy.Timeout = 5 * time.Second
+	cpy.Timeout = 2 * time.Second
 
 	return cpy
 }
