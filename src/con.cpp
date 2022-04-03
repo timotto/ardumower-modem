@@ -309,7 +309,7 @@ void Console::printStatus()
     "Relay:\r\n"
     " Status     : %s\r\n"
     " Ping       : %.1f ms\r\n"
-    " Session    : %d ms\r\n"
+    " Session    : %.0f seconds\r\n"
     " Connections: %d\r\n",
     api.relay->isConnected() ? "connected" : "disconnected",
     api.relay->pingRTT() * 1000.0,

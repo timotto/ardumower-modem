@@ -45,7 +45,7 @@ type (
 			Connected          bool    `json:"connected"`
 			Ping               float64 `json:"ping"`
 			ConnectionCount    int     `json:"connections"`
-			ConnectionDuration int     `json:"session"`
+			ConnectionDuration float64 `json:"session"`
 		} `json:"relay"`
 	}
 
