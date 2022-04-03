@@ -18,11 +18,11 @@ chmod +x bin/semver-bumper
 mkdir -p $HOME/Arduino/libraries/
 cp -r lib/* $HOME/Arduino/libraries/
 
-arduino-cli lib install AUnit
-arduino-cli lib install ArduinoJson
-arduino-cli lib install ArduinoWebsockets
-arduino-cli lib install MQTT
-arduino-cli lib install NimBLE-Arduino
+arduino-cli lib install AUnit@1.6.1
+arduino-cli lib install ArduinoJson@6.19.3
+arduino-cli lib install ArduinoWebsockets@0.5.3
+arduino-cli lib install MQTT@2.5.0
+arduino-cli lib install NimBLE-Arduino@1.3.7
 
 cd ardumower-modem
 
