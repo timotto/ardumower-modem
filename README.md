@@ -20,19 +20,17 @@ You should have received a copy of the GNU General Public License along with thi
 
 ## Flashing the ArduMower Modem firmware
 
-Flashing the firmware onto the ESP32 for the first time requires some effort. Subsequent updates can be installed comfortably using the web interface.
+Flashing the firmware onto the ESP32 for the first time requires some effort. Subsequent updates can be installed comfortably using the web interface of the Modem.
+
+### `modem_install` Arduino Sketch
+
+Use the [modem_install](util/modem_install/modem_install.ino) Arduino Sketch from the `util` folder to install the latest release binary on your ESP32.
+This Arduino Sketch requires nothing but a vanilla Arduino setup with the ESP32 package installed.
+No additional libraries are required.
 
 ### Source code and Arduino IDE
 
 Download the source code of the [latest release](https://github.com/timotto/ardumower-modem/releases) and use the Arduino IDE to compile and flash it onto the ESP32 using the Board `ESP32 Dev Module` and Partition Scheme `Minimal SPIFFS`. You will need the Arduino libraries listed in the Dependencies section below to compile the source code.
-
-### Firmware binary and esptool
-
-The Arduino core for the ESP32 comes with `esptool.py` which is used by the Arduino IDE to write the compiled sketch into the ESP32's flash memory. You can use it to flash the compiled firmware binary available at the [GitHub release page](https://github.com/timotto/ardumower-modem/releases) without compiling from source.
-
-Create a new Arduino Sketch for the Board `ESP32 Dev Module` with the Partition Scheme `Minimal SPIFFS`. Just leave it as is, with the empty `setup()` and `loop()` methods in there. Disconnect the ESP32 from your computer and click _Upload_ in the Arduino IDE. Of course it will fail but the last white line before the red error message is the `esptool.py` command line to upload the binary.
-
-Now change that line so it uploads the ArduMower Modem firmware `.bin` file you downloaded instead of the empty sketch. The command writes four `.bin` files into the flash memory. Replace the third one with the the ArduMower Modem firmware `.bin` file and execute it in a terminal prompt.
 
 ## First time WiFi setup
 
