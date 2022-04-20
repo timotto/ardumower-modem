@@ -22,6 +22,7 @@ void HttpAdapter::begin()
   _lock = xSemaphoreCreateBinary();
   xSemaphoreGive(_lock);
   _server.on("/", HTTP_POST, std::bind(&HttpAdapter::handleCommandRequest, this, std::placeholders::_1));
+  _server.on("/", HTTP_OPTIONS, std::bind(&HttpAdapter::handleCORSPreflightRequest, this, std::placeholders::_1));
   _server.on("/api/modem/reboot", HTTP_POST, std::bind(&HttpAdapter::apiReboot, this, std::placeholders::_1));
 }
 
@@ -92,6 +93,12 @@ void HttpAdapter::handleCommandRequest(AsyncWebServerRequest *request)
   }
 
   enqueueRequest(req);
+}
+
+void HttpAdapter::handleCORSPreflightRequest(AsyncWebServerRequest *request)
+{
+  Log(DBG, "HttpAdapter::handleCORSPreflightRequest");
+  respondWithCors(request, 204, "text/plain", "");
 }
 
 void HttpAdapter::processRequest(Http::CommandRequest *req)
