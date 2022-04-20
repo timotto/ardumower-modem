@@ -156,5 +156,6 @@ void respondWithCors(AsyncWebServerRequest *req, int status, String contentType,
 {
   AsyncWebServerResponse *res = req->beginResponse(status, contentType, responseBody);
   res->addHeader("Access-Control-Allow-Origin", "*");
+  res->addHeader("Access-Control-Allow-Headers", "authorization");
   req->send(res);
 }
