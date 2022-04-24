@@ -59,6 +59,7 @@ resources:
     - ci
     - util/serial_test_runner
     - util/validation
+    - util/modem_install
 
 - name: release
   type: github-release
