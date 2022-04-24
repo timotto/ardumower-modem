@@ -37,7 +37,7 @@ class SettingsServiceClass {
       return this.load()
     } catch (err) {
       if (err instanceof ServiceError) {
-        if (err.details.action === 'invalid')
+        if (err.details.action === 'validate')
           Invalid.set(err.details.error)
       }
       throw err
