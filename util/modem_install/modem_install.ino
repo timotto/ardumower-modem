@@ -1,15 +1,19 @@
 /**
    This is the ArduMower ESP Modem Installer Arduino Sketch.
+
+   In the Arduino IDE Select:
+   Tools->Partition Scheme->Minimal SPIFFS
 */
 
 // enter your WiFi credentials here:
 #define USER_WIFI_NAME     "My WiFi"
 #define USER_WIFI_PASSWORD "The password for my WiFi"
 
-#define RELEASE_URL         "https://github.com/timotto/ardumower-modem/releases/download/v1.1.1/ardumower-modem.bin"
+#define GITHUB_REPO_URL     "https://github.com/timotto/ardumower-modem"
 
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
+#include <HTTPClient.h>
 #include <HTTPUpdate.h>
 #include <time.h>
 
@@ -74,6 +78,7 @@ void setup() {
 
   WiFi.begin(USER_WIFI_NAME, USER_WIFI_PASSWORD);
 
+  Serial.print("Time sync");
   configTime(0, 0, "pool.ntp.org", "time.nist.gov");
   time_t now = time(nullptr);
   while (now < 8 * 3600 * 2) {
@@ -82,12 +87,37 @@ void setup() {
     Serial.print(F("."));
     now = time(nullptr);
   }
+  Serial.println();
 
   WiFiClientSecure client;
   client.setCACert(truststore);
 
+  Serial.print("Looking for latest release... ");
+  String latestReleaseUrl = String(GITHUB_REPO_URL) + "/releases/latest";
+  HTTPClient https;
+  https.begin(client, latestReleaseUrl);
+
+  const char* headerKeys[] = {"location"};
+  https.collectHeaders(headerKeys, 1);
+
+  int httpCode = https.GET();
+
+  String location = https.header("location");
+  https.end();
+
+  int lastSlash = location.lastIndexOf("/");
+  String latestTag = location.substring(lastSlash + 1);
+  Serial.printf("%s\n", latestTag.c_str());
+
+  String latestReleaseDownloadUrl = String(GITHUB_REPO_URL) + "/releases/download/" + latestTag + "/ardumower-modem.bin";
+  Serial.printf("Latest release firmware download URL: %s\n", latestReleaseDownloadUrl.c_str());
+
+  Serial.println("Downloading latest release. The ESP32 will restart when complete.");
+
+
+  
   httpUpdate.setFollowRedirects(HTTPC_STRICT_FOLLOW_REDIRECTS);
-  t_httpUpdate_return ret = httpUpdate.update(client, RELEASE_URL);
+  t_httpUpdate_return ret = httpUpdate.update(client, latestReleaseDownloadUrl);
   switch (ret) {
     case HTTP_UPDATE_FAILED:
       Serial.printf("HTTP_UPDATE_FAILED Error (%d): %s\n", httpUpdate.getLastError(), httpUpdate.getLastErrorString().c_str());
