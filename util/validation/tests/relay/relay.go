@@ -43,7 +43,7 @@ func ValidationSuite(bed *testbed.Testbed) bool {
 		})
 
 		It("allows parallel communication", func() {
-			parallelism := 4
+			parallelism := 3
 			requestsPerInstance := 10
 
 			errorRates := make([]float64, parallelism)
@@ -93,7 +93,7 @@ func ValidationSuite(bed *testbed.Testbed) bool {
 			}
 			averageErrorRate /= float64(parallelism)
 
-			Expect(averageErrorRate).To(BeNumerically("<=", 0.1))
+			Expect(averageErrorRate).To(BeNumerically("<=", 0.11))
 		})
 	})
 }
@@ -133,7 +133,7 @@ func (c testClient) aPostRequest(body string) *http.Request {
 
 func httpClient() *http.Client {
 	cpy := &http.Client{}
-	cpy.Timeout = 5 * time.Second
+	cpy.Timeout = 3 * time.Second
 
 	return cpy
 }

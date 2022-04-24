@@ -53,26 +53,26 @@ func UiValidationSuite(bed *testbed.Testbed) bool {
 				parallel := 2
 				count, res := tc.RunParallelRequests(hammerTimeDuration, parallel, urls)
 				Expect(res).To(Equal(NoErrors()))
-				Expect(count).To(BeNumerically(">=", float64(parallel)*CalculateExpectedRequestCount(hammerTimeDuration, 300)))
+				Expect(count).To(BeNumerically(">=", float64(parallel)*CalculateExpectedRequestCount(hammerTimeDuration, 600)))
 			})
 
 			It("serves small asset consecutively", func() {
 				count, res := tc.RunConsecutiveRequests(hammerTimeDuration, "/index.html")
-				Expect(res).To(Equal(NoErrors()))
-				Expect(count).To(BeNumerically(">=", CalculateExpectedRequestCount(hammerTimeDuration, 250)))
+				Expect(ErrorCount(res)).To(BeNumerically("<=", 2))
+				Expect(count).To(BeNumerically(">=", CalculateExpectedRequestCount(hammerTimeDuration, 500)))
 			})
 
 			It("serves big asset consecutively", func() {
 				count, res := tc.RunConsecutiveRequests(hammerTimeDuration, "/build/bundle.js")
-				Expect(res).To(Equal(NoErrors()))
-				Expect(count).To(BeNumerically(">=", CalculateExpectedRequestCount(hammerTimeDuration, 400)))
+				Expect(ErrorCount(res)).To(BeNumerically("<=", 2))
+				Expect(count).To(BeNumerically(">=", CalculateExpectedRequestCount(hammerTimeDuration, 800)))
 			})
 		})
 	})
 }
 
 const (
-	hammerTimeDuration = 2 * time.Second
+	hammerTimeDuration = 5 * time.Second
 )
 
 type (
@@ -83,6 +83,10 @@ type (
 )
 
 func NoErrors() CollectedErrors { return CollectedErrors{} }
+
+func ErrorCount(c CollectedErrors) int {
+	return len(c.Errors) + len(c.BadStatus)
+}
 
 func (c CollectedErrors) Add(o CollectedErrors) CollectedErrors {
 	return CollectedErrors{Errors: append(c.Errors, o.Errors...), BadStatus: append(c.BadStatus, o.BadStatus...)}
@@ -214,7 +218,7 @@ func ExpectResponseStatus(c *http.Client, req *http.Request, status int) {
 
 func httpClient() *http.Client {
 	cpy := &http.Client{}
-	cpy.Timeout = 2 * time.Second
+	cpy.Timeout = 3 * time.Second
 
 	return cpy
 }
