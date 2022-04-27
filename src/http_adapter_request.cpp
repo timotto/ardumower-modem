@@ -44,47 +44,14 @@ void Http::CommandRequest::parseHttpRequestBody()
 
 void Http::CommandRequest::readHttpRequestBody()
 {
-  String value = "";
-  auto n = request->params();
-  for (auto i = 0; i < n; i++)
-  {
-    auto p = request->getParam(i);
-    if (!p->isPost())
-      continue;
-
-    if (p->name() == "body")
-      continue;
-
-    if (value != "")
-      value += "&";
-    value += p->name();
-    value += "=";
-    value += p->value();
-  }
-
   if (request->hasParam("body", true))
   {
     auto body = request->getParam("body", true);
-    value = body->value();
-    if (value.startsWith("AT "))
-    {
-      value = "AT+" + value.substring(3);
-    }
-    httpRequestBody = value;
+    httpRequestBody = body->value();
     return;
-
-    // TODO test first: currently either "body" or "key=val" but what if body is like "a=b&c" or "a&b=c"?
-    // if (value != "")
-    //   value += "&";
-    // value += body->value();
   }
 
-  if (value.startsWith("AT "))
-  {
-    value = "AT+" + value.substring(3);
-  }
-
-  httpRequestBody = value;
+  httpRequestBody = "";
 }
 
 void Http::CommandRequest::trimHttpRequestBody()

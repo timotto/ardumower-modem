@@ -110,6 +110,7 @@ resources:
   <<: *firmware_library
   source:
     uri: https://github.com/timotto/ESPAsyncWebServer.git
+    branch: hack/bad-content-type
 
 - name: tool-task
   <<: *github_artifact
