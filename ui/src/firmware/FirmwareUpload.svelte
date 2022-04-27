@@ -54,7 +54,7 @@
     <p>Select the firmware update file on your computer.</p>
     <p>
       You can download the latest firmware updates on the <a
-        href="https://github.com/timotto/esp_modem/releases"
+        href="https://github.com/timotto/ardumower-modem/releases"
         target="_blank">GitHub Releases</a
       > page.
     </p>
