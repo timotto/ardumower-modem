@@ -34,8 +34,9 @@ import SliderSetting from "../widget/SliderSetting.svelte";
   />
   <svelte:fragment slot="enabled">
     <TextSetting
-      label="Server"
+      label="Server URL"
       key="mqtt.server"
+      helpText="[mqtt://]mqtt-server-name[:port]"
       bind:value={settings.server}
       bind:original={original.server}
     />

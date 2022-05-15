@@ -15,6 +15,7 @@
 #include "router_test.h"
 #include "settings_test.h"
 #include "ui_test.h"
+#include "url_test.h"
 
 void setup() {
   setup_serial();
