@@ -24,12 +24,6 @@ protected:
   void teardown() override;
 };
 
-// the request body content type is declared as application/x-www-form-urlencoded
-// but it actuall is just plain text with no encoding.
-// but the http server request handler preprocessing will attempt decoding.
-// eg:
-// - when there is a "+" in the body it gets transformed into " "
-// - when there is a "=" in the body there param "body" disappears and there is a key/value param instead
 testF(TestHttpAdapter, post_body_encoding)
 {
   http.POST("AT+@7=9,0xad\n");
@@ -98,7 +92,7 @@ void TestHttpAdapter::setup()
 
   http.begin(net, "http://localhost:8080/");
   http.collectHeaders(interestingHeaders, 2);
-  http.addHeader("Content-type", "application/x-www-form-urlencoded; charset=UTF-8");
+  http.addHeader("Content-type", "text/plain");
 }
 
 void TestHttpAdapter::teardown()
