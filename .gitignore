@@ -1,0 +1,13 @@
+.env
+
+/build
+/ui/node_modules
+/tmp
+
+.task
+.vscode
+.idea
+*.iml
+*.code-workspace
+.DS_Store
+/screenlog.*

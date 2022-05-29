@@ -1,0 +1,22 @@
+tag_prefix: v
+no_match_bump: patch
+
+keywords_major:
+- "^🤑"
+keywords_minor:
+- "^🎉"
+- "^🎢"
+- "^😍"
+- "^🥰"
+keywords_patch:
+- "^🔨"
+- "^🛠️"
+
+path_exclude:
+- ci
+- Taskfile.yml
+- README.md
+- .gitignore
+- .semver-bumper.conf.yaml
+- util/serial_test_runner
+- util/validation

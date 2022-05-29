@@ -1,0 +1,213 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  A2L_CMD: ~/Library/Arduino15/packages/esp32/tools/xtensa-esp32-elf-gcc/1.22.0-97-gc752ad5-5.2.0/bin/xtensa-esp32-elf-addr2line
+
+dotenv: ['.env']
+
+tasks:
+  clean:
+    cmds:
+    - rm -rf build
+  
+  build-ui:
+    cmds:
+    - npm run build
+    dir: ui
+    generates:
+    - public/build/**/*
+    sources:
+    - public/index.html
+    - public/smui.css
+    - src/**/*
+    - package.json
+    - rollup.config.js
+  
+  package-ui:
+    cmds:
+    - go run .
+    deps:
+    - task: build-ui
+    dir: util/package_ui
+    generates:
+    - ../../src/asset_bundle.h
+    sources:
+    - ../../ui/public/**/*
+    - ./**/*
+
+  compile:
+    cmds:
+    - |
+      git_tag_defines=$(ci/bin/git-tag.sh)
+      arduino-cli compile \
+        ardumower-modem.ino \
+        --output-dir build/dist/{{.VARIANT}} \
+        --fqbn esp32:esp32:lolin32 \
+        --build-path $PWD/build/caches/{{.VARIANT}}/build \
+        --build-cache-path $PWD/build/caches/{{.VARIANT}}/build-cache \
+        --build-property build.flash_freq=80m \
+        --build-property build.flash_size=4MB \
+        --build-property build.flash_mode=qio \
+        --build-property build.f_cpu=160000000L \
+        --build-property build.partitions=min_spiffs \
+        --build-property upload.maximum_size=1966080 \
+        --build-property "build.extra_flags=-DESP32 -D{{.VARIANT}} $git_tag_defines"
+    deps: [task: package-ui]
+    vars:
+      VARIANT: '{{default "ESP_MODEM_APP" .VARIANT}}'
+
+  build:
+    deps:
+    - task: package-ui
+    cmds:
+    - task: build-firmware
+    - task: build-sim
+    - task: build-test
+
+  build-firmware:
+    cmds:
+    - task: compile
+      vars: {VARIANT: ESP_MODEM_APP}
+
+  build-sim:
+    cmds:
+    - task: compile
+      vars: {VARIANT: ESP_MODEM_SIM}
+
+  build-test:
+    cmds:
+    - task: compile
+      vars: {VARIANT: ESP_MODEM_TEST}
+
+  flash:
+    cmds:
+    - |
+      arduino-cli upload \
+        --verbose \
+        --port ${SERIAL_PORT} \
+        --fqbn esp32:esp32:lolin32 \
+        --input-file build/dist/{{.VARIANT}}/ardumower-modem.ino.bin
+    vars:
+      VARIANT: '{{default "ESP_MODEM_APP" .VARIANT}}'
+
+  run:
+    cmds:
+    - task: flash
+      vars: {VARIANT: ESP_MODEM_APP}
+    - task: monitor
+    deps:
+    - task: build-firmware
+
+  sim:
+    cmds:
+    - task: flash
+      vars: {VARIANT: ESP_MODEM_SIM}
+    - task: monitor
+    deps:
+    - task: build-sim
+
+  test:
+    cmds:
+    - task: flash
+      vars: {VARIANT: ESP_MODEM_TEST}
+    - task: test-monitor
+    deps:
+    - task: build-test
+
+  validate:
+    cmds:
+    - go run ./cmd/validate ${SERIAL_PORT} {{.CLI_ARGS}}
+    dir: util/validation
+    silent: true
+
+  ota:
+    cmds:
+    - |
+      curl ${ESP_DEV_IP}/api/modem/ota/post \
+        -v \
+        -u "${ESP_DEV_CREDS}" \
+        -X POST \
+        -H 'Content-type: application/binary' \
+        --data-binary @ardumower-modem.bin
+    deps: [task: build-firmware]
+  
+  ota-sim:
+    cmds:
+    - |
+      curl ${ESP_DEV_IP}/api/modem/ota/post \
+        -v \
+        -u "${ESP_DEV_CREDS}" \
+        -X POST \
+        -H 'Content-type: application/binary' \
+        --data-binary @ardumower-modem_sim.bin
+    deps: [task: build-sim]
+    dir: build
+  
+  ota-prod:
+    cmds:
+    - |
+      curl ${ESP_PROD_IP}/api/modem/ota/post \
+        -v \
+        -u "${ESP_PROD_CREDS}" \
+        -X POST \
+        -H 'Content-type: application/binary' \
+        --data-binary @ardumower-modem.bin
+    deps: [task: build-firmware]
+    dir: build
+  
+  monitor:
+    # Ctrl-a Ctrl-\ terminates GNU screen
+    cmds:
+    - mv screenlog.0 screenlog.1
+    - screen -L ${SERIAL_PORT} 115200
+    deps: [task: stop-monitor]
+    silent: true
+  
+  stop-monitor:
+    cmds:
+    - |
+      pid=$(ps ax | grep "SCREEN -L ${SERIAL_PORT} 115200" | grep -v grep | cut -d\  -f1)
+      [ -z "$pid" ] || kill "$pid"
+    silent: true
+
+  test-monitor:
+    cmds:
+    - go run . ${SERIAL_PORT}
+    deps: [task: stop-monitor]
+    dir: util/serial_test_runner
+    silent: true
+
+  trace-test:
+    cmds:
+    - |
+      echo "paste 'Backtrace: 0x...' line now: "
+      read tmp backtrace
+      elf=build/ardumower-modem_test.elf
+      for x in $backtrace; do
+        {{.A2L_CMD}} -pfiaC -e $elf ${x%:*}
+      done
+    silent: true
+
+  trace-sim:
+    cmds:
+    - |
+      echo "paste 'Backtrace: 0x...' line now: "
+      read tmp backtrace
+      elf=build/ardumower-modem_sim.elf
+      for x in $backtrace; do
+        {{.A2L_CMD}} -pfiaC -e $elf ${x%:*}
+      done
+    silent: true
+
+  trace:
+    cmds:
+    - |
+      echo "paste 'Backtrace: 0x...' line now: "
+      read tmp backtrace
+      elf=build/ardumower-modem.elf
+      for x in $backtrace; do
+        {{.A2L_CMD}} -pfiaC -e $elf ${x%:*}
+      done
+    silent: true

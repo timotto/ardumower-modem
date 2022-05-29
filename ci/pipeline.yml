@@ -1,0 +1,296 @@
+resource_types:
+- name: github-release
+  type: registry-image
+  source:
+    repository: concourse/github-release-resource
+    tag: "1.6.4"
+
+- name: slack
+  type: registry-image
+  source:
+    repository: arbourd/concourse-slack-alert-resource
+
+temp:
+  firmware_library: &firmware_library
+    type: git
+    check_every: 24h
+    icon: book-open-variant
+  repo: &repo
+    type: git
+    icon: github
+    webhook_token: ((webhook_token))
+    check_every: 24h
+  repo_source: &repo_source
+    uri: git@github.com:timotto/ardumower-modem.git
+    branch: main
+    private_key: ((github.private_key))
+    fetch_tags: true
+  github_artifact: &github_artifact
+    type: github-release
+    icon: github
+    check_every: 24h
+  github_artifact_source: &github_artifact_source
+    access_token: ((github.access_token))
+  slack: &slack
+    on_failure:
+      put: slack
+      params:
+        channel: ((slack.sad))
+        alert_type: failed
+    on_abort:
+      put: slack
+      params:
+        channel: ((slack.sad))
+        alert_type: aborted
+  slack_all: &slack_all
+    <<: *slack
+    on_success:
+      put: slack
+      params:
+        channel: ((slack.happy))
+        alert_type: success
+
+resources:
+- name: source-code
+  <<: *repo
+  source:
+    <<: *repo_source
+    ignore_paths:
+    - ci
+    - util/serial_test_runner
+    - util/validation
+    - util/modem_install
+
+- name: release
+  type: github-release
+  icon: folder-open
+  source:
+    owner: timotto
+    repository: ardumower-modem
+    access_token: ((github.access_token))
+
+- name: tests
+  <<: *repo
+  source:
+    <<: *repo_source
+    paths:
+    - util/serial_test_runner
+    - util/validation
+
+- name: ci
+  <<: *repo
+  source:
+    <<: *repo_source
+    paths:
+    - ci
+
+- name: pipeline
+  <<: *repo
+  source:
+    <<: *repo_source
+    paths:
+    - ci/pipeline.yml
+
+- name: rc-artifacts
+  type: s3
+  icon: chip
+  source:
+    access_key_id: ((artifacts.access_key_id))
+    bucket: ((artifacts.bucket))
+    region_name: ((artifacts.region_name))
+    secret_access_key: ((artifacts.secret_access_key))
+    versioned_file: ardumower-modem/rc.tgz
+
+- name: lib-async-tcp
+  <<: *firmware_library
+  source:
+    uri: https://github.com/timotto/AsyncTCP.git
+
+- name: lib-esp-async-web-server
+  <<: *firmware_library
+  source:
+    uri: https://github.com/timotto/ESPAsyncWebServer.git
+    branch: hack/bad-content-type
+
+- name: tool-task
+  <<: *github_artifact
+  source:
+    <<: *github_artifact_source
+    owner: go-task
+    repository: task
+
+- name: tool-semver-bumper
+  <<: *github_artifact
+  source:
+    <<: *github_artifact_source
+    owner: timotto
+    repository: semver-bumper
+
+- name: slack
+  type: slack
+  icon: bullhorn-outline
+  source:
+    url: ((slack.low_prio_webhook_url))
+
+jobs:
+- name: build
+  serial: true
+  <<: *slack
+  plan:
+  - in_parallel:      
+    - get: source-code
+      trigger: true
+    - get: ci
+    - get: tool-task
+      params:
+        globs: [task_linux_amd64.tar.gz]
+    - get: tool-semver-bumper
+      params:
+        globs: [semver-bumper-linux-amd64]
+    - get: lib-async-tcp
+    - get: lib-esp-async-web-server
+  - in_parallel:
+    - do:
+      - task: build-ui
+        config:
+          platform: linux
+          image_resource:
+            type: registry-image
+            source: {repository: node, tag: alpine}
+          inputs:
+          - name: ci
+          - name: source-code
+          - name: tool-task
+          outputs:
+          - name: build-ui
+            path: source-code
+          caches:
+          - path: source-code/ui/node_modules
+          run: {path: ci/ci/bin/build-ui.sh}
+      - task: package-ui
+        config:
+          platform: linux
+          image_resource:
+            type: registry-image
+            source: {repository: golang, tag: latest}
+          inputs:
+          - name: ci
+          - name: build-ui
+          - name: tool-task
+          outputs:
+          - name: package-ui
+            path: build-ui
+          run: {path: ci/ci/bin/package-ui.sh}
+  - task: firmware
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source: {repository: arduinoci/ci-arduino-esp32, tag: v1.0.6}
+      inputs:
+      - name: ci
+      - name: package-ui
+        path: ardumower-modem
+      - name: tool-task
+      - name: tool-semver-bumper
+      - name: lib-async-tcp
+        path: lib/AsyncTCP
+      - name: lib-esp-async-web-server
+        path: lib/ESPAsyncWebServer
+      outputs:
+      - name: firmware
+        path: package-ui
+      - name: artifacts
+      run: {path: ci/ci/bin/build-firmware.sh}
+  - in_parallel:
+    - put: rc-artifacts
+      params:
+        file: artifacts/firmware-artifacts.tgz
+
+- name: test
+  serial: true
+  <<: *slack
+  plan:
+  - in_parallel:
+    - get: source-code
+      passed: [build]
+      trigger: true
+    - get: tests
+      trigger: true
+    - get: ci
+    - get: rc-artifacts
+      passed: [build]
+      params:
+        unpack: true
+  - task: test
+    tags: [esp32]
+    config:
+      platform: linux
+      inputs:
+      - name: ci
+      - name: tests
+      - name: source-code
+      - name: rc-artifacts
+      params:
+        SERIAL_PORT: /dev/ttyUSB0
+        VALIDATE_WIFI_STA_SSID: ((test-wifi.ssid))
+        VALIDATE_WIFI_STA_PSK: ((test-wifi.psk))
+        VALIDATE_RELAY_SERVER_URL: ((test-relay-server.url))
+        VALIDATE_RELAY_USERNAME: ((test-relay-server.username))
+        VALIDATE_RELAY_PASSWORD: ((test-relay-server.password))
+      run: {path: ci/ci/bin/run-tests.sh}
+
+- name: rc
+  serial: true
+  <<: *slack_all
+  plan:
+  - in_parallel:
+    - get: source-code
+      passed: [test]
+      trigger: true
+    - get: rc-artifacts
+      passed: [test]
+      params:
+        unpack: true
+  - in_parallel:
+    - put: source-code
+      params:
+        repository: source-code
+        tag_prefix: v
+        tag: rc-artifacts/rc-version
+        only_tag: true
+
+- name: release
+  serial: true
+  <<: *slack_all
+  plan:
+  - in_parallel:
+    - get: source-code
+      passed: [rc]
+    - get: rc-artifacts
+      passed: [rc]
+      params:
+        unpack: true
+  - put: source-code
+    params:
+      repository: source-code
+      tag: rc-artifacts/release-version
+      tag_prefix: v
+      only_tag: true
+  - put: release
+    params:
+      name: rc-artifacts/release-name
+      tag: rc-artifacts/release-version
+      tag_prefix: v
+      body: rc-artifacts/release-notes
+      globs:
+      - rc-artifacts/ardumower-modem.bin
+
+- name: pipeline
+  serial: true
+  <<: *slack_all
+  plan:
+  - get: pipeline
+    trigger: true
+  - set_pipeline: ardumower-modem
+    file: pipeline/ci/pipeline.yml
