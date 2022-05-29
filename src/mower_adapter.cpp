@@ -93,6 +93,7 @@ void MowerAdapter::parseArduMowerCommand(String line)
     parseATCCommand(line);
 }
 
+// start mowing
 bool MowerAdapter::start()
 {
   Log(DBG, "MowerAdapter::command::start"); 
@@ -101,19 +102,22 @@ bool MowerAdapter::start()
   return sendCommand("AT+C,-1,1,-1,-1,-1,-1,-1,-1");
 }
 
+// stop mowing
 bool MowerAdapter::stop()
 {
   Log(DBG, "MowerAdapter::command::stop");
   return sendCommand("AT+C,-1,0,-1,-1,-1,-1,-1,-1");
 }
 
+// dock mower to station
 bool MowerAdapter::dock()
 {
   Log(DBG, "MowerAdapter::command::start");
   return sendCommand("AT+C,-1,4,-1,-1,-1,-1,-1,-1");
 }
 
-bool MowerAdapter::skipToWaypoint(float waypoint)
+// set to a waypoint as percent of maximum waypoint
+bool MowerAdapter::setWaypoint(float waypoint)
 {
   Log(DBG, "MowerAdapter::command::skipToWaypoint(%.2f)", waypoint);
   char buffer[40];
@@ -122,6 +126,7 @@ bool MowerAdapter::skipToWaypoint(float waypoint)
   return sendCommand(command);
 }
 
+// change mower movement speed
 bool MowerAdapter::changeSpeed(float speed)
 {
   Log(DBG, "MowerAdapter::command::changeSpeed(%.2f)", speed);
@@ -131,10 +136,20 @@ bool MowerAdapter::changeSpeed(float speed)
   return sendCommand(command);
 }
 
+// activate and deactivate mowMotor
 bool MowerAdapter::mowerEnabled(bool enabled)
 {
   Log(DBG, "MowerAdapter::command::mowerEnabled(%d)", enabled);
   String command = "AT+C," + String(enabled ? "1" : "0") + ",-1,-1,-1,-1,-1,-1,-1";
+
+  return sendCommand(command);
+}
+
+// activate and deactivate finish and restart
+bool MowerAdapter::finishAndRestartEnabled(bool enabled)
+{
+  Log(DBG, "MowerAdapter::command::finishAndRestartEnabled(%d)", enabled);
+  String command = "AT+C,-1,-1,-1,-1," + String(enabled ? "1" : "0") + ",-1,-1,-1";
 
   return sendCommand(command);
 }

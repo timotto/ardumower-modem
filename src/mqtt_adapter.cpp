@@ -1,5 +1,6 @@
 #include "mqtt_adapter.h"
 #include "mqtt_ha.h"
+#include "mqtt_iobroker.h"
 #include "json.h"
 #include "log.h"
 #include "url.h"
@@ -219,6 +220,15 @@ bool MqttAdapter::connect(const uint32_t now)
 
     ArduMower::Modem::HomeAssistant::DiscoveryDocument disco(settings);
     if (!client.publish(disco.topic().c_str(), disco.toJson(topic("")).c_str()))
+      return false;
+  }
+
+  if (settings.mqtt.iob)
+  {
+    if (!client.subscribe(topic("/iob/speed").c_str()))
+      return false;
+
+    if (!client.subscribe(topic("/iob/error").c_str()))
       return false;
   }
 

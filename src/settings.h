@@ -129,9 +129,9 @@ namespace ArduMower
       class MQTT : public Group
       {
       public:
-        MQTT() : enabled(false), ha(false), publishStatus(true), publishFormat(0), publishInterval(30) {}
+        MQTT() : enabled(false), ha(false), iob(false), publishStatus(true), publishFormat(0), publishInterval(30) {}
 
-        bool enabled, ha, publishStatus;
+        bool enabled, ha, iob, publishStatus;
         String server, prefix, username, password;
         uint8_t publishFormat;
         uint32_t publishInterval;
