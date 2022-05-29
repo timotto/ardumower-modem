@@ -1,5 +1,6 @@
 #include "settings.h"
 #include "log.h"
+#include "url.h"
 #include "git_version.h"
 #include <Arduino.h>
 #include <ArduinoJson.h>
@@ -488,12 +489,27 @@ bool MQTT::valid(String &invalid) const
   if (!enabled)
     return true;
 
-  if (!(validDnsName(server) || validIpAddress(server)))
-    invalid = "mqtt.server";
-  else
-    return true;
+  ArduMower::Util::URL url(server);
 
-  return false;
+  if (!(validDnsName(url.hostname()) || validIpAddress(url.hostname())))
+  {
+    invalid = "mqtt.server";
+    return false;
+  }
+
+  if (! (url.scheme() == "" || url.scheme() == "mqtt"))
+  {
+    invalid = "mqtt.server";
+    return false;
+  }
+
+  if (! (url.port() == -1 || (url.port() >= 1 && url.port() <= 65535)))
+  {
+    invalid = "mqtt.server";
+    return false;
+  }
+
+  return true;
 }
 
 void MQTT::marshal(const JsonObject &o) const

@@ -128,8 +128,8 @@ const texts = {
             label: "Enabled"
           },
           server: {
-            label: "Server",
-            invalidText: "The server cannot be empty and must be a valid DNS name."
+            label: "Server URL",
+            invalidText: "The server URL should look like mqtt://hostname:port. If no port is specified it defaults to 1883. The scheme mqtt:// can be omitted."
           },
           prefix: {
             label: "Topic prefix"
