@@ -95,7 +95,9 @@ void MowerAdapter::parseArduMowerCommand(String line)
 
 bool MowerAdapter::start()
 {
-  Log(DBG, "MowerAdapter::command::start");
+  Log(DBG, "MowerAdapter::command::start"); 
+  //    AT+C,   -1,                   -1,    -1,          -1,                 -1,      0.32,             -1,   -1
+  // Command, Mow , start / stop / Dock , Speed, fix timeout, finish and restart, Waypoints, skip waypoint ,sonar
   return sendCommand("AT+C,-1,1,-1,-1,-1,-1,-1,-1");
 }
 
@@ -109,6 +111,15 @@ bool MowerAdapter::dock()
 {
   Log(DBG, "MowerAdapter::command::start");
   return sendCommand("AT+C,-1,4,-1,-1,-1,-1,-1,-1");
+}
+
+bool MowerAdapter::skipToWaypoint(float waypoint)
+{
+  Log(DBG, "MowerAdapter::command::skipToWaypoint(%.2f)", waypoint);
+  char buffer[40];
+  snprintf(buffer, sizeof(buffer), "AT+C,-1,-1,-1,-1,-1,%.2f,-1,-1", waypoint);
+  String command(buffer);
+  return sendCommand(command);
 }
 
 bool MowerAdapter::changeSpeed(float speed)

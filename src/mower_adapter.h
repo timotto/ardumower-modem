@@ -52,6 +52,7 @@ namespace ArduMower
       virtual bool stop();
       virtual bool dock();
       virtual bool changeSpeed(float speed);
+      virtual bool skipToWaypoint(float waypoint);
       virtual bool mowerEnabled(bool enabled);
       virtual bool requestVersion();
       virtual bool requestStatus();
