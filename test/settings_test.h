@@ -200,7 +200,13 @@ test(settings_valid_mqtt)
   assertFalse( uut.mqtt.valid(invalid) );
   assertEqual( invalid, String("mqtt.server") );
 
+  uut.mqtt.server = "mqtt://192.168.2.3:1884";
+  assertTrue( uut.mqtt.valid(invalid) );
+
   uut.mqtt.server = "192.168.2.3";
+  assertTrue( uut.mqtt.valid(invalid) );
+
+  uut.mqtt.server = "192.168.2.3:1884";
   assertTrue( uut.mqtt.valid(invalid) );
 
   uut.mqtt.server = "192.168.2.3.4";
@@ -209,7 +215,16 @@ test(settings_valid_mqtt)
   uut.mqtt.server = "some-server";
   assertTrue( uut.mqtt.valid(invalid) );
 
+  uut.mqtt.server = "mqtt://some-server";
+  assertTrue( uut.mqtt.valid(invalid) );
+
+  uut.mqtt.server = "some-server:1885";
+  assertTrue( uut.mqtt.valid(invalid) );
+
   uut.mqtt.server = "server.with.dots";
+  assertTrue( uut.mqtt.valid(invalid) );
+
+  uut.mqtt.server = "server.with.dots:1886";
   assertTrue( uut.mqtt.valid(invalid) );
 
   uut.mqtt.server = "server-with-dashes";
@@ -228,6 +243,9 @@ test(settings_valid_mqtt)
   assertFalse( uut.mqtt.valid(invalid) );
 
   uut.mqtt.server = "123server-with-numer-at-start";
+  assertFalse( uut.mqtt.valid(invalid) );
+
+  uut.mqtt.server = "http://some-server";
   assertFalse( uut.mqtt.valid(invalid) );
 
   // when off values don't matter

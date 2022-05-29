@@ -2,6 +2,7 @@
 #include "mqtt_ha.h"
 #include "json.h"
 #include "log.h"
+#include "url.h"
 #include <ArduinoJson.h>
 
 using namespace ArduMower::Modem;
@@ -16,7 +17,12 @@ void MqttAdapter::begin()
     return;
 
   Log(DBG, "MqttAdapter::begin");
-  client.begin(settings.mqtt.server.c_str(), net);
+  ArduMower::Util::URL url(settings.mqtt.server);
+  int port = url.port();
+  if (port == -1)
+    port = 1883;
+
+  client.begin(url.hostname().c_str(), port, net);
   client.onMessage(std::bind(&MqttAdapter::onMqttMessage, this, std::placeholders::_1, std::placeholders::_2));
 }
 

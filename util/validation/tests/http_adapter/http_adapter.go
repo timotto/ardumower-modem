@@ -60,7 +60,7 @@ func withChecksum(cmd string) string {
 
 func (c testClient) aPostRequest(body string) *http.Request {
 	req, err := http.NewRequest(http.MethodPost, c.serverUrl("/"), strings.NewReader(body))
-	req.Header.Set("content-type", "application/x-www-form-urlencoded; charset=UTF-8")
+	req.Header.Set("content-type", "text/plain")
 
 	Expect(err).ToNot(HaveOccurred())
 
