@@ -86,5 +86,11 @@ import SliderSetting from "../widget/SliderSetting.svelte";
       bind:value={settings.ha}
       bind:original={original.ha}
     />
+    <CheckboxSetting
+      label="IOBroker integration"
+      key="mqtt.iob"
+      bind:value={settings.iob}
+      bind:original={original.iob}
+    />
   </svelte:fragment>
 </Group>

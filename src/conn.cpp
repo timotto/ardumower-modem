@@ -1,7 +1,7 @@
 #include <WiFi.h>
 #include <esp_wifi.h>
 #include <ArduinoJson.h>
-#include "con.h"
+#include "conn.h"
 #include "git_version.h"
 #include "../test/helper/fake_ardumower_h.h"
 

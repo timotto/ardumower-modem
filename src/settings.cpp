@@ -42,6 +42,7 @@ const char * _t_publish_status = "publish_status";
 const char * _t_publish_format = "publish_format";
 const char * _t_publish_interval = "publish_interval";
 const char * _t_ha = "ha";
+const char * _t_iob = "iob";
 const char * _t_json = "json";
 const char * _t_text = "text";
 const char * _t_both = "both";
@@ -549,6 +550,7 @@ bool MQTT::unmarshal(const JsonObject &o)
   publishInterval = o[_t_publish_interval];
 
   ha = o[_t_ha];
+  iob = o[_t_iob];
 
   return true;
 }
