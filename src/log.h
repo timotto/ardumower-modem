@@ -14,13 +14,13 @@
 #define CRIT    0x01
 
 #ifndef DEBUG_LEVEL
-#ifdef ESP_MODEM_SIM
+//#ifdef ESP_MODEM_SIM
 #define DEBUG_LEVEL DBG
-#elif ESP_MODEM_TEST
-#define DEBUG_LEVEL DBG
-#else
-#define DEBUG_LEVEL INFO
-#endif
+//#elif ESP_MODEM_TEST
+//#define DEBUG_LEVEL DBG
+//#else
+//#define DEBUG_LEVEL INFO
+//#endif
 #endif
 
 #define DEBUG(...)  LOG_CON.printf(__VA_ARGS__)

@@ -25,6 +25,10 @@ void MqttAdapter::begin()
 
   client.begin(url.hostname().c_str(), port, net);
   client.onMessage(std::bind(&MqttAdapter::onMqttMessage, this, std::placeholders::_1, std::placeholders::_2));
+
+  settings.mqtt.iob = true;
+
+  if (settings.mqtt.iob) iob.setMQTTClient(&client);
 }
 
 void MqttAdapter::loop(const uint32_t now)
@@ -40,7 +44,8 @@ void MqttAdapter::loop(const uint32_t now)
   publishState(now);
   publishProps(now);
   publishStats(now);
-  ha.loop(now);
+
+  if (settings.mqtt.ha) ha.loop(now);
 }
 
 static uint32_t betterTime(uint32_t userSettingSeconds, uint32_t minimumMilliseconds)
@@ -85,7 +90,7 @@ void MqttAdapter::publishState(const uint32_t now)
   Log(DBG, "MqttAdapter::publishState");
   if (!client.publish(topic("/state").c_str(), json.c_str()))
     return;
-
+  if (settings.mqtt.iob) iob.publishState(state);
   next_time = now + interval;
 }
 
@@ -223,14 +228,12 @@ bool MqttAdapter::connect(const uint32_t now)
       return false;
   }
 
-  if (settings.mqtt.iob)
-  {
-    if (!client.subscribe(topic("/iob/speed").c_str()))
-      return false;
+  // ############## Init IOBroker Variables ##############
+  // if (!iob.createIOBrokerDataPoints())
+  //   return false;
 
-    if (!client.subscribe(topic("/iob/error").c_str()))
-      return false;
-  }
+  if (!iob.subscribeTopics())
+    return false;
 
   Log(DBG, "MqttAdapter::connect::success");
 

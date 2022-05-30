@@ -44,6 +44,7 @@ export namespace Settings {
     publish_format: 'json' | 'text' | 'both'
     publish_interval: number
     ha: boolean
+    iob: boolean
   }
   export interface Prometheus {
     enabled: boolean

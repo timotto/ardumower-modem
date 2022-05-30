@@ -151,6 +151,9 @@ const texts = {
           },
           ha: {
             label: "HomeAssistant integration"
+          },
+          iob: {
+            label: "IOBroker integration"
           }
         },
         prometheus: {
