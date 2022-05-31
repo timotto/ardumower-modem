@@ -46,8 +46,6 @@ namespace ArduMower
 
         bool subscribeTopics();   
 
-        bool createIOBrokerDataPoints();
-
         bool publishState(ArduMower::Domain::Robot::State::State state);
 
         // ################# SUPPORT METHODS ########################

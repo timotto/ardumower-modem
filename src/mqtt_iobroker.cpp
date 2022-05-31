@@ -6,58 +6,6 @@ using namespace ArduMower::Modem::IOBroker;
 
 float batteryVoltageToLevel2(const float v);
 
-bool Adapter::createIOBrokerDataPoints()
-{
-  if (settings.mqtt.iob)
-  {
-    if (!iobClient->publish(topic("/iob/stats/battery_voltage").c_str(), ""))
-    return false;
-
-    if (!iobClient->publish(topic("/iob/stats/battery_level").c_str(), ""))
-    return false;
-
-    if (!iobClient->publish(topic("/iob/stats/job").c_str(), ""))
-    return false;
-
-    if (!iobClient->publish(topic("/iob/stats/sensor").c_str(), ""))
-    return false;
-
-    if (!iobClient->publish(topic("/iob/stats/amps").c_str(), ""))
-    return false;
-
-    if (!iobClient->publish(topic("/iob/stats/map_crc").c_str(), ""))
-    return false;
-
-    if (!iobClient->publish(topic("/iob/stats/mow_point_index").c_str(), ""))
-    return false;
-
-    if (!iobClient->publish(topic("/iob/stats/position/x").c_str(), ""))
-    return false;
-
-    if (!iobClient->publish(topic("/iob/stats/position/y").c_str(), ""))
-    return false;
-
-    if (!iobClient->publish(topic("/iob/stats/position/delta").c_str(), ""))
-    return false;
-
-    if (!iobClient->publish(topic("/iob/stats/position/solution").c_str(), ""))
-    return false;
-
-    if (!iobClient->publish(topic("/iob/stats/position/age").c_str(), ""))
-    return false;
-
-    if (!iobClient->publish(topic("/iob/stats/position/accuracy").c_str(), ""))
-    return false;
-
-    if (!iobClient->publish(topic("/iob/stats/position/visible_satelites").c_str(), ""))
-    return false;
-
-    if (!iobClient->publish(topic("/iob/stats/position/visible_satelites_dgps").c_str(), ""))
-    return false;
-  }
-  Log(DBG, "IOBrokerAdapter::createIOBrokerDataPoints::success");
-}
-
 bool Adapter::subscribeTopics()
 {
 
@@ -114,41 +62,41 @@ bool Adapter::publishState(ArduMower::Domain::Robot::State::State state)
     itoa(state.job, cint, 10);
     if (!iobClient->publish(topic("/iob/stats/job").c_str(), cint)) return false;
 
-    if (!iobClient->publish(topic("/iob/stats/sensor").c_str(), ""))
-    return false;
+    itoa(state.sensor, cint, 10);
+    if (!iobClient->publish(topic("/iob/stats/sensor").c_str(), cint)) return false;
 
-    if (!iobClient->publish(topic("/iob/stats/amps").c_str(), ""))
-    return false;
+    dtostrf(state.amps, 3, 2, cfloat); 
+    if (!iobClient->publish(topic("/iob/stats/amps").c_str(), cfloat)) return false;
 
     itoa(state.mapCrc, cint, 10);
     if (!iobClient->publish(topic("/iob/stats/map_crc").c_str(), cint)) return false;
 
-    if (!iobClient->publish(topic("/iob/stats/mow_point_index").c_str(), ""))
-    return false;
+    itoa(state.position.mowPointIndex, cint, 10);
+    if (!iobClient->publish(topic("/iob/stats/mow_point_index").c_str(), cint)) return false;
 
-    if (!iobClient->publish(topic("/iob/stats/position/x").c_str(), ""))
-    return false;
+    dtostrf(state.target.x, 3, 2, cfloat); 
+    if (!iobClient->publish(topic("/iob/stats/position/x").c_str(), cfloat)) return false;
 
-    if (!iobClient->publish(topic("/iob/stats/position/y").c_str(), ""))
-    return false;
+    dtostrf(state.target.y, 3, 2, cfloat); 
+    if (!iobClient->publish(topic("/iob/stats/position/y").c_str(), cfloat)) return false;
 
-    if (!iobClient->publish(topic("/iob/stats/position/delta").c_str(), ""))
-    return false;
+    dtostrf(state.position.delta, 3, 2, cfloat); 
+    if (!iobClient->publish(topic("/iob/stats/position/delta").c_str(), cfloat)) return false;
 
-    if (!iobClient->publish(topic("/iob/stats/position/solution").c_str(), ""))
-    return false;
+    itoa(state.position.solution, cint, 10);
+    if (!iobClient->publish(topic("/iob/stats/position/solution").c_str(), cint)) return false;
 
-    if (!iobClient->publish(topic("/iob/stats/position/age").c_str(), ""))
-    return false;
+    dtostrf(state.position.age, 3, 2, cfloat); 
+    if (!iobClient->publish(topic("/iob/stats/position/age").c_str(), cfloat)) return false;
 
-    if (!iobClient->publish(topic("/iob/stats/position/accuracy").c_str(), ""))
-    return false;
+    dtostrf(state.position.accuracy, 3, 2, cfloat); 
+    if (!iobClient->publish(topic("/iob/stats/position/accuracy").c_str(), cfloat)) return false;
 
-    if (!iobClient->publish(topic("/iob/stats/position/visible_satelites").c_str(), ""))
-    return false;
+    itoa(state.position.visibleSatellites, cint, 10);
+    if (!iobClient->publish(topic("/iob/stats/position/visible_satelites").c_str(), cint)) return false;
 
-    if (!iobClient->publish(topic("/iob/stats/position/visible_satelites_dgps").c_str(), ""))
-    return false;
+    itoa(state.position.visibleSatellitesDgps, cint, 10);
+    if (!iobClient->publish(topic("/iob/stats/position/visible_satelites_dgps").c_str(), cint)) return false;
     Log(DBG, "IOBrokerAdapter::publishState::success");
 }
 
