@@ -162,11 +162,17 @@ namespace ArduMower
       class CommandExecutor
       {
       public:
+
+        virtual bool changeSpeed(float speed) = 0;
+        virtual bool dock() = 0;
+        virtual bool finishAndRestartEnabled(bool enabled) = 0;
+        virtual bool mowerEnabled(bool enabled) = 0;
+        virtual bool setFixTimeout(int timeout) = 0;
+        virtual bool setWaypoint(float waypoint) = 0;
+        virtual bool skipWaypoint() = 0;
         virtual bool start() = 0;
         virtual bool stop() = 0;
-        virtual bool dock() = 0;
-        virtual bool changeSpeed(float speed) = 0;
-        virtual bool mowerEnabled(bool enabled) = 0;
+        virtual bool sonarEnabled(bool enabled) = 0;
 
         virtual bool requestVersion() = 0;
         virtual bool requestStatus() = 0;

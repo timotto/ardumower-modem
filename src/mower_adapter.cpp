@@ -116,10 +116,17 @@ bool MowerAdapter::dock()
   return sendCommand("AT+C,-1,4,-1,-1,-1,-1,-1,-1");
 }
 
+// skip one Waypoint
+bool MowerAdapter::skipWaypoint()
+{
+  Log(DBG, "MowerAdapter::command::skipWaypoint");
+  return sendCommand("AT+C,-1,-1,-1,-1,-1,-1,1,-1");
+}
+
 // set to a waypoint as percent of maximum waypoint
 bool MowerAdapter::setWaypoint(float waypoint)
 {
-  Log(DBG, "MowerAdapter::command::skipToWaypoint(%.2f)", waypoint);
+  Log(DBG, "MowerAdapter::command::setWaypoint(%.2f)", waypoint);
   char buffer[40];
   snprintf(buffer, sizeof(buffer), "AT+C,-1,-1,-1,-1,-1,%.2f,-1,-1", waypoint);
   String command(buffer);
@@ -133,6 +140,14 @@ bool MowerAdapter::changeSpeed(float speed)
   char buffer[40];
   snprintf(buffer, sizeof(buffer), "AT+C,-1,-1,%.2f,-1,-1,-1,-1,-1", speed);
   String command(buffer);
+  return sendCommand(command);
+}
+
+// set fix Timeout
+bool MowerAdapter::setFixTimeout(int timeout)
+{
+  Log(DBG, "MowerAdapter::command::setFixTimeout(%d)", timeout);
+  String command = "AT+C,-1,-1,-1," + String(timeout) + ",-1,-1,-1,-1";
   return sendCommand(command);
 }
 
@@ -153,6 +168,16 @@ bool MowerAdapter::finishAndRestartEnabled(bool enabled)
 
   return sendCommand(command);
 }
+
+// activate and deactivate sonar
+bool MowerAdapter::sonarEnabled(bool enabled)
+{
+  Log(DBG, "MowerAdapter::command::finishAndRestartEnabled(%d)", enabled);
+  String command = "AT+C,-1,-1,-1,-1,-1,-1,-1," + String(enabled ? "1" : "0");
+
+  return sendCommand(command);
+}
+
 
 bool MowerAdapter::requestVersion()
 {

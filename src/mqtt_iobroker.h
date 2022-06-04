@@ -48,9 +48,11 @@ namespace ArduMower
 
         bool publishState(ArduMower::Domain::Robot::State::State state);
 
+        bool evaluateMessage(String topic, String payload);
+
         // ################# SUPPORT METHODS ########################
 
-        String topic(String postfix);
+        String topicCreate(String postfix);
       };
 
     }

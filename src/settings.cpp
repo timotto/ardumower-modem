@@ -527,6 +527,7 @@ void MQTT::marshal(const JsonObject &o) const
   o[_t_publish_interval] = publishInterval;
 
   o[_t_ha] = ha;
+  o[_t_iob] = iob;
 }
 
 bool MQTT::unmarshal(const JsonObject &o)

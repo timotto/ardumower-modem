@@ -26,8 +26,6 @@ void MqttAdapter::begin()
   client.begin(url.hostname().c_str(), port, net);
   client.onMessage(std::bind(&MqttAdapter::onMqttMessage, this, std::placeholders::_1, std::placeholders::_2));
 
-  settings.mqtt.iob = true;
-
   if (settings.mqtt.iob) iob.setMQTTClient(&client);
 }
 
@@ -161,6 +159,12 @@ void MqttAdapter::onMqttMessage(String topic, String payload)
     return;
   }
 
+  if (topic.indexOf("/iob/command/") != -1)
+  {
+    iob.evaluateMessage(topic, payload);
+    return;
+  }
+
   if (payload.startsWith("{"))
   {
     DynamicJsonDocument doc(1024);
@@ -217,8 +221,8 @@ bool MqttAdapter::connect(const uint32_t now)
 
   if (settings.mqtt.ha)
   {
-    if (!client.subscribe(topic("/command").c_str()))
-      return false;
+    // if (!client.subscribe(topic("/command").c_str()))
+    //   return false;
 
     if (!client.subscribe(topic("/ha/set_fan_speed").c_str()))
       return false;
