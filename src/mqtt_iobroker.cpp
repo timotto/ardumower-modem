@@ -80,6 +80,12 @@ bool Adapter::publishState(ArduMower::Domain::Robot::State::State state)
       case 2:
         if (!iobClient->publish(topicCreate("/iob/stats/job").c_str(), "charge")) return false;
         break;
+      case 3:
+        if (!iobClient->publish(topicCreate("/iob/stats/job").c_str(), "error")) return false;
+        break;
+      case 4:
+        if (!iobClient->publish(topicCreate("/iob/stats/job").c_str(), "dock")) return false;
+        break;
       default:
         if (!iobClient->publish(topicCreate("/iob/stats/job").c_str(), cint)) return false;
         break; 
