@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Accordion } from "carbon-components-svelte";
   import BluetoothSettings from "./Bluetooth.svelte";
+  import PS4ControllerSettings from "./PS4Controller.svelte";
   import GeneralSettings from "./General.svelte";
   import WebSettings from "./Web.svelte";
   import WiFiSettings from "./WiFi.svelte";
@@ -35,6 +36,10 @@ import Relay from "./Relay.svelte";
         bind:settings={$settings.bluetooth}
         bind:original={$original.bluetooth}
       />
+      <!-- <PS4ControllerSettings
+        bind:settings={$settings.ps4Controller}
+        bind:original={$original.ps4Controller}
+      /> -->
       <Relay
         bind:settings={$settings.relay}
         bind:original={$original.relay}

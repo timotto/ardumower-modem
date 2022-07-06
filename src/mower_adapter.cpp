@@ -201,6 +201,17 @@ bool MowerAdapter::requestStats()
   return sendCommand("AT+T", true);
 }
 
+// linear: m/s
+// angular: rad/s
+bool MowerAdapter::manualDrive(float linear, float angular)
+{
+  Log(DBG, "MowerAdapter::manualDrive(%.2f, %.2f)", linear, angular);
+  char buffer[40];
+  snprintf(buffer, sizeof(buffer), "AT+M,%.2f, %.2f", linear, angular);
+  String command(buffer);
+  return sendCommand(command);
+}
+
 void MowerAdapter::parseStatisticsResponse(String line)
 {
   Log(DBG, "MowerAdapter::parseStatisticsResponse");

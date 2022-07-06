@@ -177,6 +177,8 @@ namespace ArduMower
         virtual bool requestVersion() = 0;
         virtual bool requestStatus() = 0;
         virtual bool requestStats() = 0;
+
+        virtual bool manualDrive(float linear, float angular) = 0;
       };
     }
   }

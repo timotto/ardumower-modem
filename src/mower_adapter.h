@@ -63,6 +63,8 @@ namespace ArduMower
       virtual bool requestStatus();
       virtual bool requestStats();
 
+      virtual bool manualDrive(float linear, float angular);
+
       virtual void drainRx(String line, bool &stop) override;
       virtual void drainTx(String line, bool &stop) override;
     };
