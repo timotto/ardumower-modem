@@ -16,6 +16,7 @@ const char * _t_general = "general";
 const char * _t_web = "web";
 const char * _t_wifi = "wifi";
 const char * _t_bluetooth = "bluetooth";
+const char * _t_ps4controller = "ps4controller";
 const char * _t_relay = "relay";
 const char * _t_mqtt = "mqtt";
 const char * _t_prometheus = "prometheus";
@@ -36,6 +37,8 @@ const char * _t_encryption = "encryption";
 const char * _t_protected = "protected";
 const char * _t_pin_enabled = "pin_enabled";
 const char * _t_pin = "pin";
+const char * _t_use_ps4_mac = "use_ps4_mac";
+const char * _t_ps4_mac = "ps4_mac";
 const char * _t_prefix = "prefix";
 const char * _t_server = "server";
 const char * _t_publish_status = "publish_status";
@@ -86,7 +89,7 @@ void Settings::begin()
   file = SPIFFS.open(filename.c_str());
 #endif
 
-  DynamicJsonDocument doc(1024);
+  DynamicJsonDocument doc(1120);
   auto err = deserializeJson(doc, file);
 
   if (err != DeserializationError::Ok)
@@ -144,6 +147,7 @@ void Settings::marshal(const JsonObject &o) const
   web.marshal(o.createNestedObject(_t_web));
   wifi.marshal(o.createNestedObject(_t_wifi));
   bluetooth.marshal(o.createNestedObject(_t_bluetooth));
+  ps4controller.marshal(o.createNestedObject(_t_ps4controller));
   relay.marshal(o.createNestedObject(_t_relay));
   mqtt.marshal(o.createNestedObject(_t_mqtt));
   prometheus.marshal(o.createNestedObject(_t_prometheus));
@@ -176,6 +180,7 @@ bool Settings::unmarshal(const JsonObject &o)
   mustContainAndSucceed("Settings", o, _t_web, web.unmarshal(o[_t_web]));
   mustContainAndSucceed("Settings", o, _t_wifi, wifi.unmarshal(o[_t_wifi]));
   mustContainAndSucceed("Settings", o, _t_bluetooth, bluetooth.unmarshal(o[_t_bluetooth]));
+  mustContainAndSucceed("Settings", o, _t_ps4controller, ps4controller.unmarshal(o[_t_ps4controller]));
   mustContainAndSucceed("Settings", o, _t_relay, relay.unmarshal(o[_t_relay]));
   mustContainAndSucceed("Settings", o, _t_mqtt, mqtt.unmarshal(o[_t_mqtt]));
   mustContainAndSucceed("Settings", o, _t_prometheus, prometheus.unmarshal(o[_t_prometheus]));
@@ -189,6 +194,7 @@ void Settings::stripSecrets(const JsonObject &o) const
   web.stripSecrets(o[_t_web]);
   wifi.stripSecrets(o[_t_wifi]);
   bluetooth.stripSecrets(o[_t_bluetooth]);
+  ps4controller.stripSecrets(o[_t_ps4controller]);
   relay.stripSecrets(o[_t_relay]);
   mqtt.stripSecrets(o[_t_mqtt]);
   prometheus.stripSecrets(o[_t_prometheus]);
@@ -400,6 +406,27 @@ void Bluetooth::stripSecrets(const JsonObject &o) const
     o[_t_has_pin] = true;
     o.remove(_t_pin);
   }
+}
+
+void PS4Controller::marshal(const JsonObject &o) const
+{
+  o[_t_enabled] = enabled;
+  o[_t_use_ps4_mac] = use_ps4_mac;
+  o[_t_ps4_mac] = ps4_mac;
+}
+
+bool PS4Controller::unmarshal(const JsonObject &o)
+{
+  enabled = o[_t_enabled];
+  use_ps4_mac = o[_t_use_ps4_mac];
+  ps4_mac = o[_t_ps4_mac].as<String>();
+
+  return true;
+}
+
+void PS4Controller::stripSecrets(const JsonObject &o) const
+{
+  stripSecret(o, _t_password, _t_has_password);
 }
 
 static bool validDnsName(const String &name)

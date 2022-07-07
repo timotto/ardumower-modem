@@ -20,19 +20,19 @@
   />
   <svelte:fragment slot="enabled">
     <CheckboxSetting
-      label="Bluetooth pairings require a PIN code"
-      key="ps4Controller.usePS4MAC"
-      bind:value={settings.usePS4MAC}
-      bind:original={original.usePS4MAC}
+      label="Use MAC address from PS4. (You can use the sixaxispairer tool to read the MAC address from the cotroller)"
+      key="ps4Controller.use_ps4_mac"
+      bind:value={settings.use_ps4_mac}
+      bind:original={original.use_ps4_mac}
     />
 
     <TextSetting
-      label="Use MAC address from PS4. (You can use the sixaxispairer tool to read the MAC address from the cotroller)"
+      label=""
       key="ps4Controller.ps4MAC"
       placeholder="PS4 Bluetooth MAC Address"
-      disabled={!settings.usePS4MAC}
-      bind:value={settings.ps4MAC}
-      bind:original={original.ps4MAC}
+      disabled={!settings.use_ps4_mac}
+      bind:value={settings.ps4_mac}
+      bind:original={original.ps4_mac}
     />
   </svelte:fragment>
 </Group>

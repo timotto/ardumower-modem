@@ -10,11 +10,11 @@ dotenv: ['.env']
 tasks:
   clean:
     cmds:
-    - rm -rf build
+    - rm -rf ui/public/build
   
   build-ui:
     cmds:
-    - npm run build
+    - npm run dev
     dir: ui
     generates:
     - public/build/**/*
@@ -156,7 +156,17 @@ tasks:
         --data-binary @ardumower-modem.bin
     deps: [task: build-firmware]
     dir: build
-  
+
+  ota-sim-pio:
+    cmds:
+    - |
+      curl ${ESP_DEV_IP}/api/modem/ota/upload \
+        -v \
+        -u "${ESP_DEV_CREDS}" \
+        -X POST \
+        -H 'Content-type: application/binary' \
+        --data-binary @.pio/build/esp32/partitions.bin 
+    
   monitor:
     # Ctrl-a Ctrl-\ terminates GNU screen
     cmds:

@@ -29,8 +29,8 @@ export namespace Settings {
 
   export interface PS4Controller {
     enabled: boolean
-    usePS4MAC: boolean;
-    ps4MAC: string;
+    use_ps4_mac: boolean;
+    ps4_mac: string;
   }
   export interface Relay {
     enabled: boolean
@@ -64,7 +64,7 @@ export interface Settings {
   web: Settings.Web
   wifi: Settings.WiFi
   bluetooth: Settings.Bluetooth
-  ps4Controller: Settings.PS4Controller
+  ps4controller: Settings.PS4Controller
   relay: Settings.Relay
   mqtt: Settings.Mqtt
   prometheus: Settings.Prometheus

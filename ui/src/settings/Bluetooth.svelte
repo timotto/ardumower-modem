@@ -10,6 +10,8 @@
   export let settings: Settings.Bluetooth;
   export let original: Settings.Bluetooth;
 
+  export let ps4ControllerSettings: Settings.PS4Controller;
+
   let confirmClearPairing = false;
   const clearPairings = () => {
     confirmClearPairing = true;
@@ -24,6 +26,10 @@
       clearing = false;
     }
   };
+
+  const enableChange = (e) => {
+    ps4ControllerSettings.enabled = false;
+  }
 </script>
 
 <Group title="Bluetooth" {settings} {original}>
@@ -32,6 +38,7 @@
     key="bluetooth.enabled"
     bind:value={settings.enabled}
     bind:original={original.enabled}
+    on:change={enableChange}
   />
   <svelte:fragment slot="enabled">
     <CheckboxSetting
