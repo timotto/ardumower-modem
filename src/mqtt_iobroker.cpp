@@ -45,6 +45,7 @@ bool Adapter::subscribeTopics()
       return false;
   }
   Log(DBG, "IOBrokerAdapter::subscribeTopics::success");
+  return true;
 }
 
 String Adapter::topicCreate(String postfix)
@@ -138,6 +139,7 @@ bool Adapter::publishState(ArduMower::Domain::Robot::State::State state)
     itoa(state.position.visibleSatellitesDgps, cint, 10);
     if (!iobClient->publish(topicCreate("/iob/stats/position/visible_satelites_dgps").c_str(), cint)) return false;
     Log(DBG, "IOBrokerAdapter::publishState::success");
+    return true;
 }
 
 bool Adapter::evaluateMessage(String topic, String payload)
@@ -265,6 +267,7 @@ bool Adapter::evaluateMessage(String topic, String payload)
 
   //if (!iobClient->publish(topicCreate("/iob/error").c_str(), "no error")) return false;
   Log(DBG, "IOBrokerAdapter::publishState::success");
+  return true;
 }
 
 float batteryVoltageToLevel2(const float v)

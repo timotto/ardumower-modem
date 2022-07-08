@@ -2,6 +2,7 @@
   import { Button, Toggle } from "carbon-components-svelte";
   import IconClear from "carbon-icons-svelte/lib/CloseOutline16";
   import { createEventDispatcher } from "svelte";
+import type { ChangeEventValue } from "../model";
   import { Busy } from "../stores/busy";
 
   export let label: string;
@@ -9,10 +10,10 @@
   export let value: boolean;
   export let original: boolean;
   
-  let dispatch = createEventDispatcher();
+  let dispatch = createEventDispatcher<{ change: ChangeEventValue }>();
 
-  const change = (e) => {
-      dispatch('change', e);
+  const change = (event, value) => {
+      dispatch('change', { event: event, value: value });
   }
 
   let dirty = false;
@@ -27,7 +28,7 @@
 </script>
 
 <main>
-  <Toggle labelText={labelMod} bind:toggled={value} disabled={$Busy} on:change={change} />
+  <Toggle labelText={labelMod} bind:toggled={value} disabled={$Busy} on:change="{(e) => change(e, value)}" />
   {#if dirty}
     <Button
       on:click={revert}

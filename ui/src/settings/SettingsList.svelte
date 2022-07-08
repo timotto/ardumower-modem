@@ -10,6 +10,7 @@
   import Firmware from "./Firmware.svelte";
   import { FrontendSettings as settings } from "../stores/frontend";
   import { BackendSettings as original } from "../stores/backend";
+  import { InfoStore as info } from "../stores/info";
   import Reload from "./Reload.svelte";
 import Relay from "./Relay.svelte";
 
@@ -41,6 +42,8 @@ import Relay from "./Relay.svelte";
         <PS4ControllerSettings
           bind:settings={$settings.ps4controller}
           bind:original={$original.ps4controller}
+          bind:bluetoothSettings={$settings.bluetooth}
+          bind:info={$info}
         />
       {/if}
       <Relay

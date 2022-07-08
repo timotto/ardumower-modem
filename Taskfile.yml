@@ -14,7 +14,7 @@ tasks:
   
   build-ui:
     cmds:
-    - npm run dev
+    - npm run build
     dir: ui
     generates:
     - public/build/**/*
@@ -25,6 +25,19 @@ tasks:
     - package.json
     - rollup.config.js
   
+  debug-ui:
+    cmds:
+    - npm run dev
+    dir: ui
+    generates:
+    - public/build/**/*
+    sources:
+    - public/index.html
+    - public/smui.css
+    - src/**/*
+    - package.json
+    - rollup.config.js
+
   package-ui:
     cmds:
     - go run .
@@ -165,7 +178,7 @@ tasks:
         -u "${ESP_DEV_CREDS}" \
         -X POST \
         -H 'Content-type: application/binary' \
-        --data-binary @.pio/build/esp32/partitions.bin 
+        --data-binary @.pio/build/esp32/firmware.bin 
     
   monitor:
     # Ctrl-a Ctrl-\ terminates GNU screen

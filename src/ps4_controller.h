@@ -5,13 +5,16 @@
 #include "settings.h"
 #include "domain.h"
 
-#define PS4_SEND_INTERVAL 500
+#define NO_GLOBAL_INSTANCES
+#include <PS4Controller.h>
 
+#define PS4_SEND_INTERVAL 500
+#define PS4_DISCONNECT_TIMEOUT 10000
 namespace ArduMower
 {
   namespace Modem
   {
-    namespace PS4Controller
+    namespace PS4controller
     {
       class Adapter
       {
@@ -21,6 +24,8 @@ namespace ArduMower
         float oldLiniar = 0;
         float oldAngular = 0;
         uint32_t lastSendTime = 0;
+        PS4Controller *ps4 = NULL;
+        uint32_t waitForDisconnect = 0;
         
       public:
         Adapter(

@@ -207,6 +207,9 @@ namespace ArduMower
         const char * version() const;
 
         void marshal(const JsonObject &o) const;
+      private:
+        bool initBluetooth() const;
+        String getBTMacAddress() const;
       };
 
       extern PropertiesClass Properties;

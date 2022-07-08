@@ -6,6 +6,8 @@
 #include <ArduinoJson.h>
 #include <SPIFFS.h>
 #include <string.h>
+#include "esp_bt_main.h"
+#include "esp_bt_device.h"
 
 using namespace ArduMower::Modem::Settings;
 
@@ -53,6 +55,7 @@ const char * _t_git_hash = "git_hash";
 const char * _t_git_time = "git_time";
 const char * _t_git_tag = "git_tag";
 const char * _t_uptime = "uptime";
+const char * _t_bt_mac = "bt_mac";
 const char * _t_has_sta_psk = "has_sta_psk";
 const char * _t_has_ap_psk = "has_ap_psk";
 const char * _t_has_password = "has_password";
@@ -429,6 +432,8 @@ void PS4Controller::stripSecrets(const JsonObject &o) const
   stripSecret(o, _t_password, _t_has_password);
 }
 
+
+
 static bool validDnsName(const String &name)
 {
   if (name == "")
@@ -630,6 +635,53 @@ void PropertiesClass::marshal(const JsonObject &o) const
   o[_t_git_time] = git_time;
   o[_t_git_tag] = git_tag;
   o[_t_uptime] = millis();
+  o[_t_bt_mac] = getBTMacAddress();
 }
+
+bool PropertiesClass::initBluetooth() const
+{
+  if (!btStart()) {
+    Serial.println("Failed to initialize controller");
+    return false;
+  }
+ 
+  if (esp_bluedroid_init() != ESP_OK) {
+    Serial.println("Failed to initialize bluedroid");
+    return false;
+  }
+ 
+  if (esp_bluedroid_enable() != ESP_OK) {
+    Serial.println("Failed to enable bluedroid");
+    return false;
+  }
+
+  return true;
+}
+
+String PropertiesClass::getBTMacAddress() const
+{ 
+  const uint8_t* point = esp_bt_dev_get_address();
+  if (point == NULL)
+    initBluetooth();
+
+  point = esp_bt_dev_get_address();
+  if (point == NULL)
+    return "BT stack not enabled";
+
+  String mac = "";
+  for (int i = 0; i < 6; i++) {
+ 
+    char str[3];
+    sprintf(str, "%02X", (int)point[i]);
+    mac += str;
+ 
+    if (i < 5){
+      mac += ":";
+    }
+  }
+
+  return mac;
+}
+
 
 PropertiesClass ArduMower::Modem::Settings::Properties;

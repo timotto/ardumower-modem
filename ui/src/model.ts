@@ -74,7 +74,8 @@ export interface Info {
   git_hash: string
   git_time: string;
   git_tag: string;
-  uptime: number
+  uptime: number;
+  bt_mac: string;
 }
 
 export interface Status {
@@ -83,4 +84,9 @@ export interface Status {
   relay_connect_count: number
   relay_connect_time: number
   relay_rtt: number
+}
+
+export interface ChangeEventValue {
+ event: Event;
+ value: any; 
 }
