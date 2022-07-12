@@ -1,10 +1,14 @@
 #include "ps4_controller.h"
 #include "esp_gap_bt_api.h"
+#include <esp_bt_main.h>
 
 using namespace ArduMower::Modem::PS4controller;
 
-Adapter::Adapter(ArduMower::Modem::Settings::Settings &_settings, ArduMower::Domain::Robot::CommandExecutor &_cmd): 
-    settings(_settings), cmd(_cmd)  
+Adapter::Adapter(
+    ArduMower::Modem::Settings::Settings &_settings, 
+    ArduMower::Domain::Robot::StateSource &_source,
+    ArduMower::Domain::Robot::CommandExecutor &_cmd): 
+    settings(_settings), source(_source), cmd(_cmd)  
 {
 }
 
@@ -16,12 +20,12 @@ void Adapter::begin()
         ps4 = new PS4Controller();
 
     if (settings.ps4controller.use_ps4_mac) {
-        Serial.print("ps4_mac: ");
-        Serial.println(settings.ps4controller.ps4_mac);
         ps4->begin(settings.ps4controller.ps4_mac.c_str());
     } else {
         ps4->begin();
     }
+
+    //ps4->attachOnConnect(onConnect);
 }
 
 void Adapter::loop()
@@ -30,7 +34,7 @@ void Adapter::loop()
         return;
 
     if (waitForDisconnect != 0) {
-        if (millis() < waitForDisconnect)
+        if (millis() < waitForDisconnect + PS4_DISCONNECT_TIMEOUT)
             return;
 
         waitForDisconnect = 0;
@@ -41,43 +45,10 @@ void Adapter::loop()
         return;
 
     if (ps4->isConnected()) {
-        // if (ps4->Right()) Serial.println("Right Button");
-        // if (ps4->Down()) Serial.println("Down Button");
-        // if (ps4->Up()) Serial.println("Up Button");
-        // if (ps4->Left()) Serial.println("Left Button");
-
-        // if (ps4->Square()) Serial.println("Square Button");
-        // if (ps4->Cross()) Serial.println("Cross Button");
-        // if (ps4->Circle()) Serial.println("Circle Button");
-        // if (ps4->Triangle()) Serial.println("Triangle Button");
-
-        // if (ps4->UpRight()) Serial.println("Up Right");
-        // if (ps4->DownRight()) Serial.println("Down Right");
-        // if (ps4->UpLeft()) Serial.println("Up Left");
-        // if (ps4->DownLeft()) Serial.println("Down Left");
-
-        // if (ps4->L1()) Serial.println("L1 Button");
-        // if (ps4->R1()) Serial.println("R1 Button");
-
-        // if (ps4->Share()) Serial.println("Share Button");
-        // if (ps4->Options()) Serial.println("Options Button");
-        // if (ps4->L3()) Serial.println("L3 Button");
-        // if (ps4->R3()) Serial.println("R3 Button");
-
-        if (ps4->PSButton())  {
-            Serial.println("disconnect PS4 controller");
-            waitForDisconnect = millis() + PS4_DISCONNECT_TIMEOUT;
-            delete ps4;
-            ps4 = NULL;
-            return;
-        }
         // if (ps4->Touchpad()) Serial.println("Touch Pad Button");
 
         // if (ps4->L2()) {
         // Serial.printf("L2 button at %d\n", ps4->L2Value());
-        // }
-        // if (ps4->R2()) {
-        // Serial.printf("R2 button at %d\n", ps4->R2Value());
         // }
 
         float liniar = 0;
@@ -107,6 +78,73 @@ void Adapter::loop()
             oldLiniar = liniar;
             oldAngular = angular;
             lastSendTime = millis();
+        }
+
+        if (millis() - lastSendTime < PS4_SEND_INTERVAL)
+            return;
+
+        if (ps4->Circle()) {
+            //Serial.println("Circle Button");
+            cmd.mowerEnabled(!source.desiredStateP()->mowerMotorEnabled);
+            lastSendTime = millis();
+        }
+        if (ps4->Triangle()) {
+            //Serial.println("Triangle Button");
+            cmd.start();
+            lastSendTime = millis();
+        }
+        if (ps4->Square()) {
+            //Serial.println("Square Button");
+            cmd.stop();
+            lastSendTime = millis();
+        }
+        if (ps4->Cross()) {
+            //Serial.println("Cross Button");
+            cmd.skipWaypoint();
+            lastSendTime = millis();
+        }
+
+        if (ps4->L1()) {
+            //Serial.println("L1 Button");
+            float newSpeed = source.desiredStateP()->speed - (source.desiredStateP()->speed < 0.1 ? 0.01 : (source.desiredStateP()->speed < 0.2 ? 0.02 : 0.5));
+            if (newSpeed < 0.01) 
+                newSpeed = 0.01;
+            cmd.changeSpeed(newSpeed);
+            lastSendTime = millis();
+        }
+        if (ps4->R1()) {
+            //Serial.println("R1 Button");
+            float newSpeed = source.desiredStateP()->speed + (source.desiredStateP()->speed < 0.1 ? 0.01 : (source.desiredStateP()->speed < 0.2 ? 0.02 : 0.5));
+            if (newSpeed > 0.59) 
+                newSpeed = 0.59;
+            cmd.changeSpeed(newSpeed);
+            lastSendTime = millis();
+        }
+
+        // if (ps4->Share()) Serial.println("Share Button");
+        // if (ps4->Options()) Serial.println("Options Button");
+        // if (ps4->L3()) Serial.println("L3 Button");
+        // if (ps4->R3()) Serial.println("R3 Button");
+
+        if (ps4->PSButton())  {
+            if (psButtonPressTime == 0)
+                psButtonPressTime = millis();
+        } else if (psButtonPressTime > 0) {
+            if (millis() - psButtonPressTime < 800) { // short press
+                Serial.println("disconnect PS4 controller");
+                esp_bluedroid_disable();
+                delete ps4;
+                ps4 = NULL;            
+                waitForDisconnect = millis();
+            } else { // long press
+                cmd.powerOff();
+                ps4->setLed(255, 0, 0);
+                ps4->setFlashRate(80, 80);
+                ps4->sendToController();    
+            }
+
+            psButtonPressTime = 0;
+            return;
         }   
 
         // if (ps4->Charging()) Serial.println("The controller is charging");
@@ -120,3 +158,7 @@ void Adapter::loop()
         // Remove it when you're not trying to see the output
     }
 }
+
+// void Adapter::onConnect() {
+//    Serial.println("PS4 controller connected");
+// }

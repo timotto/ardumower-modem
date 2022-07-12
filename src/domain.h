@@ -179,6 +179,10 @@ namespace ArduMower
         virtual bool requestStats() = 0;
 
         virtual bool manualDrive(float linear, float angular) = 0;
+
+        virtual bool reboot() = 0;
+        virtual bool rebootGPS() = 0;
+        virtual bool powerOff() = 0;
       };
     }
   }

@@ -78,7 +78,7 @@ MqttAdapter mqttAdapter(settings, router, mowerAdapter, mowerAdapter);
 Prometheus::Adapter prometheusAdapter(settings, webServer.server(), mowerAdapter, mowerAdapter);
 Prometheus::LooptimeMonitor looptime;
 
-PS4controller::Adapter ps4ControllerAdapter(settings, mowerAdapter); 
+PS4controller::Adapter ps4ControllerAdapter(settings, mowerAdapter, mowerAdapter); 
 
 void setup() {
   Serial.begin(115200);

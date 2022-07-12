@@ -212,6 +212,27 @@ bool MowerAdapter::manualDrive(float linear, float angular)
   return sendCommand(command);
 }
 
+// reboot the mower
+bool MowerAdapter::reboot()
+{
+  Log(DBG, "MowerAdapter::reboot()");
+  return sendCommand("AT+Y");
+}
+
+// reboot GPS
+bool MowerAdapter::rebootGPS()
+{
+  Log(DBG, "MowerAdapter::rebootGPS()");
+  return sendCommand("AT+Y2");
+}
+
+// power off the mower
+bool MowerAdapter::powerOff()
+{
+  Log(DBG, "MowerAdapter::powerOff()");
+  return sendCommand("AT+Y3");
+}
+
 void MowerAdapter::parseStatisticsResponse(String line)
 {
   Log(DBG, "MowerAdapter::parseStatisticsResponse");
