@@ -71,6 +71,11 @@ tasks:
     vars:
       VARIANT: '{{default "ESP_MODEM_APP" .VARIANT}}'
 
+  compile-pio:
+    cmds:
+    - pio run
+    deps: [task: package-ui]
+    
   build:
     deps:
     - task: package-ui

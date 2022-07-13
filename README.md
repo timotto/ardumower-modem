@@ -58,12 +58,29 @@ The ArduMower Modem supports MQTT for status reporting and control. It has suppo
 
 The Prometheus endpoint of the ArduMower Modem makes it easy to collect metrics about the ArduMower and the Modem.
 
+### Control the mowing robot with the PS4 controller 
+- The robotic lawnmower can be controlled with a PS4 controller
+- Button assignment:
+   left joystick -> fast movements, 
+   right joystick -> slow movements, 
+   cross + R2 -> linear movements + rotation on the spot,
+   triangle -> start automatic mowing,
+   rectangle -> stop automatic mowing,  
+   circle -> mowing motor on/off,
+   cross -> skip next mowing point,
+   L1 -> reduce mowing speed,
+   R1 -> increase mowing speed
+- The configuration is done via the web interface
+
+-> The compilation is done with PlatformIO. Required dependencies are stored in platformio.ini. 
+
 ## Dependencies
 
 ### Development Environment
 
 The sketch is developed using [Arduino 1.8.16](https://www.arduino.cc/) and the [Arduino core for the ESP32 1.0.6](https://github.com/espressif/arduino-esp32). All automation is orchestrated by a [Taskfile](https://taskfile.dev/).
 Building the web interface requires Node JS. The tools to package the web interface and to run the validation tests require Go.
+
 
 ### Arduino Libraries
 
@@ -73,6 +90,7 @@ Most libraries are available via the Arduino Library Manager:
 - [ArduinoWebsockets](https://github.com/gilmaimon/ArduinoWebsockets)
 - [MQTT](https://github.com/256dpi/arduino-mqtt)
 - [NimBLE-Arduino](https://github.com/h2zero/NimBLE-Arduino)
+- [PS4-esp32](https://github.com/aed3/PS4-esp32.git)
 
 Two libraries need to be installed manually:
 - [ESPAsyncWebServer](https://github.com/timotto/ESPAsyncWebServer)
