@@ -58,18 +58,18 @@ The ArduMower Modem supports MQTT for status reporting and control. It has suppo
 
 The Prometheus endpoint of the ArduMower Modem makes it easy to collect metrics about the ArduMower and the Modem.
 
-### Control the mowing robot with the PS4 controller 
+### PS4 controller 
 - The robotic lawnmower can be controlled with a PS4 controller
 - Button assignment:
-   left joystick -> fast movements, 
-   right joystick -> slow movements, 
-   cross + R2 -> linear movements + rotation on the spot,
-   triangle -> start automatic mowing,
-   rectangle -> stop automatic mowing,  
-   circle -> mowing motor on/off,
-   cross -> skip next mowing point,
-   L1 -> reduce mowing speed,
-   R1 -> increase mowing speed
+   - left joystick -> fast movements, 
+   - right joystick -> slow movements, 
+   - cross + R2 -> linear movements + rotation on the spot,
+   - triangle -> start automatic mowing,
+   - rectangle -> stop automatic mowing,  
+   - circle -> mowing motor on/off,
+   - cross -> skip next mowing point,
+   - L1 -> reduce mowing speed,
+   - R1 -> increase mowing speed
 - The configuration is done via the web interface
 
 -> The compilation is done with PlatformIO. Required dependencies are stored in platformio.ini. 
