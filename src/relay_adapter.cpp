@@ -1,10 +1,11 @@
 #include "relay_adapter.h"
 #include "log.h"
 #include "trust.h"
-extern "C"
-{
-#include "crypto/base64.h"
-}
+// extern "C"
+// {
+//   #include "crypto/base64.h"
+// }
+#include "mbedtls/base64.h"
 
 using namespace ArduMower::Modem;
 using namespace ArduMower::Util;
@@ -55,7 +56,9 @@ void RelayAdapter::setupAuthorizationHeader()
 
   String plain = settings.relay.username + ":" + settings.relay.password;
   size_t n;
-  unsigned char *encoded = base64_encode((const unsigned char *)plain.c_str(), plain.length(), &n);
+  //unsigned char *encoded = base64_encode((const unsigned char *)plain.c_str(), plain.length(), &n);
+  unsigned char encoded[128];
+  mbedtls_base64_encode(encoded, 64, &n, (const unsigned char*)plain.c_str(), plain.length());
 
   // why does base64_encode append a single "\r" / 0x0a character?
   if (n > 0)

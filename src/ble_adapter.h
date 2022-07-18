@@ -51,6 +51,9 @@ namespace ArduMower
 
       unsigned int writeCount(char *buffer, unsigned int size);
 
+      bool initBluetooth();
+      char *bda2str(const uint8_t* bda, char *str, size_t size);
+      
     public:
       BleAdapter(Settings::Settings &s, Router &r);
 

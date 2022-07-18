@@ -7,6 +7,7 @@
 .task
 .vscode
 .idea
+.pio
 *.iml
 *.code-workspace
 .DS_Store

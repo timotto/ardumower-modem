@@ -21,14 +21,14 @@ namespace ArduMower
         std::function<bool(const String &, const String &)> tx;
 
         float batteryVoltage;
-        int job;
+        int   job;
         float speed;
-        bool mowerEnabled;
+        bool  mowerEnabled;
 
-        bool commandSpeedPending;
+        bool  commandSpeedPending;
         float commandSpeedValue;
-        bool commandMowerEnabledPending;
-        bool commandMowerEnabledValue;
+        bool  commandMowerEnabledPending;
+        bool  commandMowerEnabledValue;
 
         void loopReport(const uint32_t now);
         void loopCommand(const uint32_t now);

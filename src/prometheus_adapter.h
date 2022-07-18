@@ -57,6 +57,7 @@ namespace ArduMower
           }
           result += " ";
           result += value;
+          return result;
         }
       };
     }

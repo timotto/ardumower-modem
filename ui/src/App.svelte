@@ -45,3 +45,9 @@
   <HelpDialog bind:open={helpOpen} />
   <SettingsRoute />
 </Content>
+
+<style>
+  :global(.bx--toggle-input__label .bx--toggle__switch) {
+    margin-top: 0.5rem !important;
+  }
+</style>

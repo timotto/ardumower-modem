@@ -93,24 +93,47 @@ void MowerAdapter::parseArduMowerCommand(String line)
     parseATCCommand(line);
 }
 
+// start mowing
 bool MowerAdapter::start()
 {
-  Log(DBG, "MowerAdapter::command::start");
+  Log(DBG, "MowerAdapter::command::start"); 
+  //    AT+C,   -1,                   -1,    -1,          -1,                 -1,      0.32,             -1,   -1
+  // Command, Mow , start / stop / Dock , Speed, fix timeout, finish and restart, Waypoints, skip waypoint ,sonar
   return sendCommand("AT+C,-1,1,-1,-1,-1,-1,-1,-1");
 }
 
+// stop mowing
 bool MowerAdapter::stop()
 {
   Log(DBG, "MowerAdapter::command::stop");
   return sendCommand("AT+C,-1,0,-1,-1,-1,-1,-1,-1");
 }
 
+// dock mower to station
 bool MowerAdapter::dock()
 {
   Log(DBG, "MowerAdapter::command::start");
   return sendCommand("AT+C,-1,4,-1,-1,-1,-1,-1,-1");
 }
 
+// skip one Waypoint
+bool MowerAdapter::skipWaypoint()
+{
+  Log(DBG, "MowerAdapter::command::skipWaypoint");
+  return sendCommand("AT+C,-1,-1,-1,-1,-1,-1,1,-1");
+}
+
+// set to a waypoint as percent of maximum waypoint
+bool MowerAdapter::setWaypoint(float waypoint)
+{
+  Log(DBG, "MowerAdapter::command::setWaypoint(%.2f)", waypoint);
+  char buffer[40];
+  snprintf(buffer, sizeof(buffer), "AT+C,-1,-1,-1,-1,-1,%.2f,-1,-1", waypoint);
+  String command(buffer);
+  return sendCommand(command);
+}
+
+// change mower movement speed
 bool MowerAdapter::changeSpeed(float speed)
 {
   Log(DBG, "MowerAdapter::command::changeSpeed(%.2f)", speed);
@@ -120,6 +143,15 @@ bool MowerAdapter::changeSpeed(float speed)
   return sendCommand(command);
 }
 
+// set fix Timeout
+bool MowerAdapter::setFixTimeout(int timeout)
+{
+  Log(DBG, "MowerAdapter::command::setFixTimeout(%d)", timeout);
+  String command = "AT+C,-1,-1,-1," + String(timeout) + ",-1,-1,-1,-1";
+  return sendCommand(command);
+}
+
+// activate and deactivate mowMotor
 bool MowerAdapter::mowerEnabled(bool enabled)
 {
   Log(DBG, "MowerAdapter::command::mowerEnabled(%d)", enabled);
@@ -127,6 +159,25 @@ bool MowerAdapter::mowerEnabled(bool enabled)
 
   return sendCommand(command);
 }
+
+// activate and deactivate finish and restart
+bool MowerAdapter::finishAndRestartEnabled(bool enabled)
+{
+  Log(DBG, "MowerAdapter::command::finishAndRestartEnabled(%d)", enabled);
+  String command = "AT+C,-1,-1,-1,-1," + String(enabled ? "1" : "0") + ",-1,-1,-1";
+
+  return sendCommand(command);
+}
+
+// activate and deactivate sonar
+bool MowerAdapter::sonarEnabled(bool enabled)
+{
+  Log(DBG, "MowerAdapter::command::finishAndRestartEnabled(%d)", enabled);
+  String command = "AT+C,-1,-1,-1,-1,-1,-1,-1," + String(enabled ? "1" : "0");
+
+  return sendCommand(command);
+}
+
 
 bool MowerAdapter::requestVersion()
 {
@@ -148,6 +199,38 @@ bool MowerAdapter::requestStats()
   if (!assertSendIsInitialized())
     return false;
   return sendCommand("AT+T", true);
+}
+
+// linear: m/s
+// angular: rad/s
+bool MowerAdapter::manualDrive(float linear, float angular)
+{
+  Log(DBG, "MowerAdapter::manualDrive(%.2f, %.2f)", linear, angular);
+  char buffer[40];
+  snprintf(buffer, sizeof(buffer), "AT+M,%.2f, %.2f", linear, angular);
+  String command(buffer);
+  return sendCommand(command);
+}
+
+// reboot the mower
+bool MowerAdapter::reboot()
+{
+  Log(DBG, "MowerAdapter::reboot()");
+  return sendCommand("AT+Y");
+}
+
+// reboot GPS
+bool MowerAdapter::rebootGPS()
+{
+  Log(DBG, "MowerAdapter::rebootGPS()");
+  return sendCommand("AT+Y2");
+}
+
+// power off the mower
+bool MowerAdapter::powerOff()
+{
+  Log(DBG, "MowerAdapter::powerOff()");
+  return sendCommand("AT+Y3");
 }
 
 void MowerAdapter::parseStatisticsResponse(String line)

@@ -48,14 +48,26 @@ namespace ArduMower
       virtual ArduMower::Domain::Robot::Stats::Stats *statsP() { return &_stats; };
       virtual ArduMower::Domain::Robot::DesiredState *desiredStateP() { return &_desiredState; }
 
+      virtual bool changeSpeed(float speed);
+      virtual bool dock();
+      virtual bool finishAndRestartEnabled(bool enabled);
+      virtual bool mowerEnabled(bool enabled);
+      virtual bool setFixTimeout(int timeout);
+      virtual bool setWaypoint(float waypoint);
+      virtual bool skipWaypoint();
       virtual bool start();
       virtual bool stop();
-      virtual bool dock();
-      virtual bool changeSpeed(float speed);
-      virtual bool mowerEnabled(bool enabled);
+      virtual bool sonarEnabled(bool enabled);
+
       virtual bool requestVersion();
       virtual bool requestStatus();
       virtual bool requestStats();
+
+      virtual bool manualDrive(float linear, float angular);
+
+      virtual bool reboot();
+      virtual bool rebootGPS();
+      virtual bool powerOff();
 
       virtual void drainRx(String line, bool &stop) override;
       virtual void drainTx(String line, bool &stop) override;
