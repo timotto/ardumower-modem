@@ -108,6 +108,19 @@ namespace ArduMower
         virtual void stripSecrets(const JsonObject &o) const override;
       };
 
+      class PS4Controller : public Group
+      {
+      public:
+        PS4Controller() : enabled(true), use_ps4_mac(true), ps4_mac("11:22:33:44:55:66") {}
+        bool enabled;
+        bool use_ps4_mac;
+        String ps4_mac;
+
+        virtual void marshal(const JsonObject &o) const override;
+        virtual bool unmarshal(const JsonObject &o) override;
+        virtual void stripSecrets(const JsonObject &o) const override;
+      };
+
       class Relay : public Group
       {
       public:
@@ -129,9 +142,9 @@ namespace ArduMower
       class MQTT : public Group
       {
       public:
-        MQTT() : enabled(false), ha(false), publishStatus(true), publishFormat(0), publishInterval(30) {}
+        MQTT() : enabled(false), ha(false), iob(false), publishStatus(true), publishFormat(0), publishInterval(30) {}
 
-        bool enabled, ha, publishStatus;
+        bool enabled, ha, iob, publishStatus;
         String server, prefix, username, password;
         uint8_t publishFormat;
         uint32_t publishInterval;
@@ -165,6 +178,7 @@ namespace ArduMower
         Web web;
         WiFi wifi;
         Bluetooth bluetooth;
+        PS4Controller ps4controller;
         Relay relay;
         MQTT mqtt;
         Prometheus prometheus;
@@ -193,6 +207,9 @@ namespace ArduMower
         const char * version() const;
 
         void marshal(const JsonObject &o) const;
+      private:
+        bool initBluetooth() const;
+        String getBTMacAddress() const;
       };
 
       extern PropertiesClass Properties;

@@ -50,6 +50,7 @@ func (b *bundleCollector) collect(path string, info fs.FileInfo, err error) erro
 		return nil
 	}
 
+	path = strings.Replace(path, "\\", "/", -1)
 	name := strings.TrimPrefix(path, b.path)
 	if name == "" || name == "/" {
 		return nil

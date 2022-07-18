@@ -26,6 +26,12 @@ export namespace Settings {
     pin: number
     has_pin: boolean
   }
+
+  export interface PS4Controller {
+    enabled: boolean
+    use_ps4_mac: boolean;
+    ps4_mac: string;
+  }
   export interface Relay {
     enabled: boolean
     url: string
@@ -44,6 +50,7 @@ export namespace Settings {
     publish_format: 'json' | 'text' | 'both'
     publish_interval: number
     ha: boolean
+    iob: boolean
   }
   export interface Prometheus {
     enabled: boolean
@@ -57,6 +64,7 @@ export interface Settings {
   web: Settings.Web
   wifi: Settings.WiFi
   bluetooth: Settings.Bluetooth
+  ps4controller: Settings.PS4Controller
   relay: Settings.Relay
   mqtt: Settings.Mqtt
   prometheus: Settings.Prometheus
@@ -66,7 +74,8 @@ export interface Info {
   git_hash: string
   git_time: string;
   git_tag: string;
-  uptime: number
+  uptime: number;
+  bt_mac: string;
 }
 
 export interface Status {
@@ -75,4 +84,9 @@ export interface Status {
   relay_connect_count: number
   relay_connect_time: number
   relay_rtt: number
+}
+
+export interface ChangeEventValue {
+ event: Event;
+ value: any; 
 }

@@ -33,8 +33,8 @@ public:
   virtual bool start() override { return true; }
   virtual bool stop() override { return true; }
   virtual bool dock() override { return true; }
-  virtual bool changeSpeed(float speed) { return true; };
-  virtual bool mowerEnabled(bool enabled) { return true; }
+  virtual bool changeSpeed(float speed) override { return true; };
+  virtual bool mowerEnabled(bool enabled) override { return true; }
 
   virtual bool requestVersion() override { return true; }
   virtual bool requestStatus() override { return true; }

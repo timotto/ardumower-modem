@@ -1,5 +1,6 @@
 #include "mqtt_adapter.h"
 #include "mqtt_ha.h"
+#include "mqtt_iobroker.h"
 #include "json.h"
 #include "log.h"
 #include "url.h"
@@ -24,6 +25,8 @@ void MqttAdapter::begin()
 
   client.begin(url.hostname().c_str(), port, net);
   client.onMessage(std::bind(&MqttAdapter::onMqttMessage, this, std::placeholders::_1, std::placeholders::_2));
+
+  if (settings.mqtt.iob) iob.setMQTTClient(&client);
 }
 
 void MqttAdapter::loop(const uint32_t now)
@@ -39,7 +42,8 @@ void MqttAdapter::loop(const uint32_t now)
   publishState(now);
   publishProps(now);
   publishStats(now);
-  ha.loop(now);
+
+  if (settings.mqtt.ha) ha.loop(now);
 }
 
 static uint32_t betterTime(uint32_t userSettingSeconds, uint32_t minimumMilliseconds)
@@ -84,7 +88,7 @@ void MqttAdapter::publishState(const uint32_t now)
   Log(DBG, "MqttAdapter::publishState");
   if (!client.publish(topic("/state").c_str(), json.c_str()))
     return;
-
+  if (settings.mqtt.iob) iob.publishState(state);
   next_time = now + interval;
 }
 
@@ -155,6 +159,12 @@ void MqttAdapter::onMqttMessage(String topic, String payload)
     return;
   }
 
+  if (topic.indexOf("/iob/command/") != -1)
+  {
+    iob.evaluateMessage(topic, payload);
+    return;
+  }
+
   if (payload.startsWith("{"))
   {
     DynamicJsonDocument doc(1024);
@@ -211,8 +221,8 @@ bool MqttAdapter::connect(const uint32_t now)
 
   if (settings.mqtt.ha)
   {
-    if (!client.subscribe(topic("/command").c_str()))
-      return false;
+    // if (!client.subscribe(topic("/command").c_str()))
+    //   return false;
 
     if (!client.subscribe(topic("/ha/set_fan_speed").c_str()))
       return false;
@@ -221,6 +231,13 @@ bool MqttAdapter::connect(const uint32_t now)
     if (!client.publish(disco.topic().c_str(), disco.toJson(topic("")).c_str()))
       return false;
   }
+
+  // ############## Init IOBroker Variables ##############
+  // if (!iob.createIOBrokerDataPoints())
+  //   return false;
+
+  if (!iob.subscribeTopics())
+    return false;
 
   Log(DBG, "MqttAdapter::connect::success");
 

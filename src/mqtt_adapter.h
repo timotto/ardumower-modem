@@ -3,6 +3,7 @@
 
 #include "backoff.h"
 #include "mqtt_ha.h"
+#include "mqtt_iobroker.h"
 #include "router.h"
 #include "domain.h"
 #include "settings.h"
@@ -24,6 +25,7 @@ namespace ArduMower
       ArduMower::Domain::Robot::StateSource &source;
       ArduMower::Domain::Robot::CommandExecutor &cmd;
       HomeAssistant::Adapter ha;
+      IOBroker::Adapter      iob;
 
       WiFiClient net;
       MQTTClient client;
@@ -46,6 +48,9 @@ namespace ArduMower
                   ArduMower::Domain::Robot::CommandExecutor &_cmd)
           : settings(_settings), router(_router), source(_source), cmd(_cmd),
             ha(HomeAssistant::Adapter(
+                _settings, _source, _cmd,
+                std::bind(&MqttAdapter::publishTo, this, std::placeholders::_1, std::placeholders::_2))),
+            iob(IOBroker::Adapter(
                 _settings, _source, _cmd,
                 std::bind(&MqttAdapter::publishTo, this, std::placeholders::_1, std::placeholders::_2))),
             client(MQTTClient(2048)), backoff(ArduMower::Util::Backoff(1000, 6000, 1.2))

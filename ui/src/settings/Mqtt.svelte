@@ -79,12 +79,18 @@ import SliderSetting from "../widget/SliderSetting.svelte";
       bind:value={settings.publish_interval}
       bind:original={original.publish_interval}
       min={5} max={900}
-      />
+    />
     <CheckboxSetting
       label="HomeAssistant integration"
       key="mqtt.ha"
       bind:value={settings.ha}
       bind:original={original.ha}
+    />
+    <CheckboxSetting
+      label="IOBroker integration"
+      key="mqtt.iob"
+      bind:value={settings.iob}
+      bind:original={original.iob}
     />
   </svelte:fragment>
 </Group>
