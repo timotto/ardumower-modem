@@ -109,6 +109,17 @@ const texts = {
             invalidText: "The PIN cannot be empty and must be 4 - 6 digits long"
           }
         },
+        ps4Controller: {
+          enabled: {
+            label: "Use PS4 controller to control the mower"
+          },
+          use_ps4_mac: {
+            label: "Pairing Mode (You can use the sixaxispairer tool to read the PS4 MAC address from the cotroller or overwrite it with ESP32 BT MAC)"
+          },
+          ps4MAC: {
+            label: "PS4 BT MAC address (When switching on the Controller, the PS4 should be far enough away)"
+          }
+        },
         relay: {
           enabled: {
             label: "Connect to your ArduMower through a Relay server"

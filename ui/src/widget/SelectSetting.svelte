@@ -1,6 +1,8 @@
 <script lang="ts">
   import { Button, Select, SelectItem } from "carbon-components-svelte";
   import IconClear from "carbon-icons-svelte/lib/CloseOutline16";
+import { createEventDispatcher } from "svelte";
+import type { ChangeEventValue } from "../model";
   import type { Option } from "../model/ui";
   import { Busy } from "../stores/busy";
 
@@ -10,6 +12,12 @@
   export let original: any;
   export let options: Option<any>[];
   export let disabled: boolean = false;
+
+  let dispatch = createEventDispatcher<{ change: ChangeEventValue }>();
+
+  const change = (event, value) => {
+      dispatch('change', { event: event, value: value });
+  }
 
   let dirty = false;
   $: dirty = value !== original;
@@ -27,6 +35,7 @@
     labelText={labelMod}
     bind:selected={value}
     disabled={disabled || $Busy}
+    on:change="{(e) => change(e, value)}"
   >
     {#each options as option}
       <SelectItem text={option.label} value={option.value} />

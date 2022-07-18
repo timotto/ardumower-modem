@@ -10,7 +10,7 @@ dotenv: ['.env']
 tasks:
   clean:
     cmds:
-    - rm -rf build
+    - rm -rf ui/public/build
   
   build-ui:
     cmds:
@@ -25,6 +25,19 @@ tasks:
     - package.json
     - rollup.config.js
   
+  debug-ui:
+    cmds:
+    - npm run dev
+    dir: ui
+    generates:
+    - public/build/**/*
+    sources:
+    - public/index.html
+    - public/smui.css
+    - src/**/*
+    - package.json
+    - rollup.config.js
+
   package-ui:
     cmds:
     - go run .
@@ -58,6 +71,11 @@ tasks:
     vars:
       VARIANT: '{{default "ESP_MODEM_APP" .VARIANT}}'
 
+  compile-pio:
+    cmds:
+    - pio run
+    deps: [task: package-ui]
+    
   build:
     deps:
     - task: package-ui
@@ -156,7 +174,17 @@ tasks:
         --data-binary @ardumower-modem.bin
     deps: [task: build-firmware]
     dir: build
-  
+
+  ota-sim-pio:
+    cmds:
+    - |
+      curl ${ESP_DEV_IP}/api/modem/ota/upload \
+        -v \
+        -u "${ESP_DEV_CREDS}" \
+        -X POST \
+        -H 'Content-type: application/binary' \
+        --data-binary @.pio/build/esp32/firmware.bin 
+    
   monitor:
     # Ctrl-a Ctrl-\ terminates GNU screen
     cmds:

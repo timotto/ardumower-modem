@@ -33,6 +33,7 @@
 #include "ui_adapter.h"
 #include "web_server.h"
 #include "wifi_adapter.h"
+#include "ps4_controller.h"
 
 using namespace ArduMower::Modem;
 
@@ -77,6 +78,10 @@ MqttAdapter mqttAdapter(settings, router, mowerAdapter, mowerAdapter);
 Prometheus::Adapter prometheusAdapter(settings, webServer.server(), mowerAdapter, mowerAdapter);
 Prometheus::LooptimeMonitor looptime;
 
+#ifdef ENABLE_PS4_CONTROLLER
+PS4controller::Adapter ps4ControllerAdapter(settings, mowerAdapter, mowerAdapter); 
+#endif
+
 void setup() {
   Serial.begin(115200);
   Serial2.begin(115200);
@@ -99,6 +104,9 @@ void setup() {
   mqttAdapter.begin();
   prometheusAdapter.begin();
   ui.begin();
+#ifdef ENABLE_PS4_CONTROLLER
+  ps4ControllerAdapter.begin();
+#endif
 
 #ifdef ESP_MODEM_SIM
   looptime.add("con", std::bind(&Console::loop, &con));
@@ -111,7 +119,10 @@ void setup() {
   looptime.add("ble", std::bind(&BleAdapter::loop, &bleAdapter));
   looptime.add("relay", std::bind(&RelayAdapter::loop, &relayAdapter));
   looptime.add("mqtt", [&](){mqttAdapter.loop(millis());});
-
+#ifdef ENABLE_PS4_CONTROLLER
+  looptime.add("ps4_controller", std::bind(&PS4controller::Adapter::loop, &ps4ControllerAdapter));
+#endif
+  
 #ifdef ESP_MODEM_SIM
   Serial1.begin(115200, SERIAL_8N1, 23, 22); // loop to Serial2
   setup_fake_ardumower();

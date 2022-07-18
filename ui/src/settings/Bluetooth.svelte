@@ -1,29 +1,18 @@
 <script lang="ts">
-  import { Button, Modal } from "carbon-components-svelte";
-  import IconTrash from "carbon-icons-svelte/lib/TrashCan16";
-  import type { Settings } from "../model";
-  import { BluetoothService } from "../service";
+  import type { ChangeEventValue, Settings } from "../model";
   import CheckboxSetting from "../widget/CheckboxSetting.svelte";
   import TextSetting from "../widget/TextSetting.svelte";
+import BluetoothClean from "./BluetoothClean.svelte";
   import Group from "./Group.svelte";
 
   export let settings: Settings.Bluetooth;
   export let original: Settings.Bluetooth;
 
-  let confirmClearPairing = false;
-  const clearPairings = () => {
-    confirmClearPairing = true;
-  };
-  let clearing = false;
-  const confirmed = async () => {
-    clearing = true;
-    try {
-      await BluetoothService.resetPairings();
-      confirmClearPairing = false;
-    } finally {
-      clearing = false;
-    }
-  };
+  export let ps4ControllerSettings: Settings.PS4Controller;
+
+  const enableChange = (ev: ChangeEventValue) => {
+    ps4ControllerSettings.enabled = false;
+  }
 </script>
 
 <Group title="Bluetooth" {settings} {original}>
@@ -32,6 +21,7 @@
     key="bluetooth.enabled"
     bind:value={settings.enabled}
     bind:original={original.enabled}
+    on:change={(e) => enableChange(e.detail)}
   />
   <svelte:fragment slot="enabled">
     <CheckboxSetting
@@ -51,26 +41,9 @@
       bind:original={original.pin}
     />
 
-    <Button
-      on:click={clearPairings}
-      icon={IconTrash}
-      kind="danger-tertiary"
-      disabled={!settings.pin_enabled}>Delete all Bluetooth Pairings</Button
-    >
+    <BluetoothClean
+      bind:bluetoothSettings={settings}
+      bind:ps4ControllerSettings={ps4ControllerSettings}
+    />
   </svelte:fragment>
 </Group>
-
-<Modal
-  danger
-  bind:open={confirmClearPairing}
-  primaryButtonDisabled={clearing}
-  modalHeading="Delete all Bluetooth Pairings"
-  primaryButtonText="Delete"
-  secondaryButtonText="Cancel"
-  on:click:button--secondary={() => (confirmClearPairing = false)}
-  on:open
-  on:close
-  on:submit={confirmed}
->
-  <p>Previously connected Bluetooth devices will be asked for a PIN again.</p>
-</Modal>
