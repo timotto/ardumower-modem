@@ -3,7 +3,7 @@
 #include "trust.h"
 extern "C"
 {
-#include "crypto/base64.h"
+#include "base64.h"
 }
 
 using namespace ArduMower::Modem;
@@ -54,16 +54,16 @@ void RelayAdapter::setupAuthorizationHeader()
     return;
 
   String plain = settings.relay.username + ":" + settings.relay.password;
-  size_t n;
-  unsigned char *encoded = base64_encode((const unsigned char *)plain.c_str(), plain.length(), &n);
+  String encoded = base64::encode((const unsigned char *)plain.c_str(), plain.length());
+  size_t n = encoded.length();
+
 
   // why does base64_encode append a single "\r" / 0x0a character?
-  if (n > 0)
-    encoded[n - 1] = 0;
+  if (n > 0 && encoded[n-1] == '\r')
+    encoded = encoded.substring(0,n-1);
 
-  String authValue = "Basic " + String((char *)encoded);
+  String authValue = "Basic " + encoded;
   client.addHeader("Authorization", authValue);
-  free(encoded);
 }
 
 void RelayAdapter::loop()
