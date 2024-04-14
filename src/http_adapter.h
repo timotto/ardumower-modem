@@ -9,10 +9,6 @@
 #include <list>
 #include <Arduino.h>
 
-#ifndef ESP_ASYNC_WEB_SERVER_CONTENT_TYPE_HACK
-#error "you need my hacked version of ESPAsyncWebServer to compile this code. Use this branch: https://github.com/timotto/ESPAsyncWebServer/tree/hack/bad-content-type"
-#endif
-
 namespace ArduMower
 {
   namespace Modem
