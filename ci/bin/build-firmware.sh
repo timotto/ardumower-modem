@@ -15,9 +15,6 @@ tar -zxf tool-task/task_linux_amd64.tar.gz -C bin
 cp tool-semver-bumper/semver-bumper-* bin/semver-bumper
 chmod +x bin/semver-bumper
 
-mkdir -p $HOME/Arduino/libraries/
-cp -r lib/* $HOME/Arduino/libraries/
-
 arduino-cli lib install AUnit@1.6.1
 arduino-cli lib install ArduinoJson@6.19.3
 arduino-cli lib install ArduinoWebsockets@0.5.3
