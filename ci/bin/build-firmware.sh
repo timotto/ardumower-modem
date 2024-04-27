@@ -26,6 +26,7 @@ arduino-cli lib install ArduinoJson@6.19.3
 arduino-cli lib install ArduinoWebsockets@0.5.3
 arduino-cli lib install MQTT@2.5.0
 arduino-cli lib install NimBLE-Arduino@1.3.7
+arduino-cli lib install AsyncTCP@1.1.4
 arduino-cli lib install "ESP Async WebServer"@2.9.0
 
 cd ardumower-modem
