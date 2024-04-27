@@ -205,6 +205,20 @@ jobs:
       passed: [build]
       params:
         unpack: true
+
+  - task: build-tools
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source: {repository: golang, tag: alpine}
+      inputs:
+      - name: ci
+      - name: tests
+      outputs:
+      - name: test-artifacts
+      run: {path: ci/ci/bin/build-test-tools.sh}
+
   - task: test
     tags: [esp32]
     config:
@@ -214,6 +228,7 @@ jobs:
       - name: tests
       - name: source-code
       - name: rc-artifacts
+      - name: test-artifacts
       params:
         SERIAL_PORT: /dev/ttyUSB0
         VALIDATE_WIFI_STA_SSID: ((test-wifi.ssid))

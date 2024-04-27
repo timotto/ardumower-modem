@@ -14,16 +14,7 @@ flash() {
     0x8000 "$artifacts/${1}.partitions.bin"
 }
 
-mkdir -p temp
-target="$PWD/temp"
-
-cd tests/util/serial_test_runner
-go build -o "$target/serial_test_runner" .
-cd -
-
-cd tests/util/validation
-go build -o "$target/validate" ./cmd/validate
-cd -
+target="$PWD/test-artifacts"
 
 # task test
 flash ardumower-modem_test
