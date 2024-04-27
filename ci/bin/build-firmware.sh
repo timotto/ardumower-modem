@@ -4,6 +4,12 @@ set -eo pipefail
 
 . "$(dirname "$0")/common.sh"
 
+rm -rf /var/cache/apt
+ln -s $PWD/cache/apt /var/cache/apt
+rm -f /etc/apt/apt.conf.d/docker-clean
+
+apt update && apt install -u git
+
 artifacts="${PWD}/artifacts"
 temp="${PWD}/temp"
 mkdir -p "${temp}"

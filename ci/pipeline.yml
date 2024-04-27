@@ -184,6 +184,8 @@ jobs:
       - name: firmware
         path: package-ui
       - name: artifacts
+      caches:
+      - path: cache/apt
       run: {path: ci/ci/bin/build-firmware.sh}
   - in_parallel:
     - put: rc-artifacts
