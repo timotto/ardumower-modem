@@ -97,5 +97,7 @@ public:
     String s = String((char)c);
 
     result = result + s;
+
+    return 1;
   }
 };
