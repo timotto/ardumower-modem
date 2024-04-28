@@ -211,8 +211,8 @@ void TestMowerAdapter::fakeArduMowerOutput(String givenInput)
   Serial1.print(givenInput.c_str());
   Serial1.flush();
   while (Serial2.available())
-    delay(10);
-  delay(10);
+    delay(100);
+  delay(100);
 }
 
 String TestMowerAdapter::fakeArduMowerInputReadLine()
@@ -229,7 +229,7 @@ String TestMowerAdapter::fakeArduMowerInputReadLine()
       
       return line;
     }
-    delay(1);
+    delay(10);
   }
 
   return "timeout";
