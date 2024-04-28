@@ -22,10 +22,10 @@ tar -zxf tool-task/task_linux_amd64.tar.gz -C bin
 cp tool-semver-bumper/semver-bumper-* bin/semver-bumper
 chmod +x bin/semver-bumper
 
+cd ardumower-modem
+
 arduino-cli lib update-index
 task install-libraries
-
-cd ardumower-modem
 
 semver-bumper \
   -o "$temp/release-version" \
