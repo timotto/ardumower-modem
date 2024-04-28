@@ -8,7 +8,8 @@ rm -rf /var/cache/apt
 ln -s $PWD/cache/apt /var/cache/apt
 rm -f /etc/apt/apt.conf.d/docker-clean
 
-apt update && apt install -y -qq git
+apt-get update -qq
+apt-get install -y -qq git
 
 artifacts="${PWD}/artifacts"
 temp="${PWD}/temp"
