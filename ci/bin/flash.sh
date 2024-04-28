@@ -79,7 +79,8 @@ function parse_cli_parameters() {
 
   test -c "$serial_port" || usage "serial-port $serial_port is not a device or does not exist"
 
-  test $(( ${#@} % 2)) = 0 || usage "offset and partition must be given in pairs"
+  # somehow ${#@} returns 399 on alpine:3.19 🤷
+  # test $(( ${#@} % 2)) = 0 || usage "offset and partition must be given in pairs"
 
   while [ ${#@} -gt 0 ]
   do
