@@ -76,9 +76,6 @@ cpy ESP_MODEM_APP ""
 cpy ESP_MODEM_SIM "_sim"
 cpy ESP_MODEM_TEST "_test"
 
-cp -v ~/.arduino15/packages/esp32/hardware/esp32/*/tools/partitions/boot_app0.bin "${temp}/"
-cp -v ~/.arduino15/packages/esp32/hardware/esp32/*/tools/sdk/esp32/bin/bootloader_qio_80m.bin "${temp}/"
-
 tar \
   -czv \
   -f "${artifacts}/firmware-artifacts.tgz" \
