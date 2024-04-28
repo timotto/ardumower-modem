@@ -65,7 +65,7 @@ task build
 cpy() {
   variant="$1"
   target="$2"
-  for file in bin elf partitions.bin
+  for file in bin elf bootloader.bin partitions.bin
   do
     cp -v \
       "build/dist/${variant}/ardumower-modem.ino.${file}" \
@@ -76,6 +76,8 @@ cpy() {
 cpy ESP_MODEM_APP ""
 cpy ESP_MODEM_SIM "_sim"
 cpy ESP_MODEM_TEST "_test"
+
+cp -v ~/.arduino15/packages/esp32/hardware/esp32/*/tools/partitions/boot_app0.bin "${temp}/"
 
 tar \
   -czv \
