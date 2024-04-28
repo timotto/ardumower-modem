@@ -12,8 +12,8 @@
 
 void setup_serial() {
   Serial.begin(115200);
-  Serial1.begin(921600, SERIAL_8N1, 23, 22); // loop to Serial2
-  Serial2.begin(921600, SERIAL_8N1, 16, 17); // connect Serial2 TXD to GPIO 23 and RXD to GPIO 22
+  Serial1.begin(115200, SERIAL_8N1, 23, 22); // loop to Serial2
+  Serial2.begin(115200, SERIAL_8N1, 16, 17); // connect Serial2 TXD to GPIO 23 and RXD to GPIO 22
 
   auto verify = [](Stream & in, Stream & out, String text, char term, String nameIn, String nameOut) {
     while(in.available()) in.read();

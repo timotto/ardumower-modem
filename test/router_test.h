@@ -260,7 +260,7 @@ void TestRouter::fakeInput(String input)
 {
   Serial1.print(input.c_str());
   Serial1.flush();
-  delay(1);
+  delay(10);
   uut->loop();
 }
 
