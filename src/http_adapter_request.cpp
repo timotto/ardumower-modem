@@ -44,10 +44,9 @@ void Http::CommandRequest::parseHttpRequestBody()
 
 void Http::CommandRequest::readHttpRequestBody()
 {
-  if (request->hasParam("body", true))
+  if (request->_tempObject)
   {
-    auto body = request->getParam("body", true);
-    httpRequestBody = body->value();
+    httpRequestBody = (char*)request->_tempObject;
     return;
   }
 

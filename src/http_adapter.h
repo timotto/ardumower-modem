@@ -70,6 +70,7 @@ namespace ArduMower
       uint32_t requestId;
 
       void handleCommandRequest(AsyncWebServerRequest *request);
+      void handleCommandRequestBody(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
       void handleCORSPreflightRequest(AsyncWebServerRequest *request);
       void apiReboot(AsyncWebServerRequest *request);
       void handleRootRequest(AsyncWebServerRequest *request);

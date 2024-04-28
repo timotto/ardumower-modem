@@ -21,7 +21,14 @@ void HttpAdapter::begin()
   _metrics = new Http::Metrics();
   _lock = xSemaphoreCreateBinary();
   xSemaphoreGive(_lock);
-  _server.on("/", HTTP_POST, std::bind(&HttpAdapter::handleCommandRequest, this, std::placeholders::_1));
+
+  auto commandRequestHandler = new AsyncCallbackWebHandler();
+  commandRequestHandler->setUri("/");
+  commandRequestHandler->setMethod(HTTP_POST);
+  commandRequestHandler->onRequest(std::bind(&HttpAdapter::handleCommandRequest, this, std::placeholders::_1));
+  commandRequestHandler->onBody(std::bind(&HttpAdapter::handleCommandRequestBody, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
+  _server.addHandler(commandRequestHandler);
+
   _server.on("/", HTTP_OPTIONS, std::bind(&HttpAdapter::handleCORSPreflightRequest, this, std::placeholders::_1));
   _server.on("/api/modem/reboot", HTTP_POST, std::bind(&HttpAdapter::apiReboot, this, std::placeholders::_1));
 }
@@ -93,6 +100,17 @@ void HttpAdapter::handleCommandRequest(AsyncWebServerRequest *request)
   }
 
   enqueueRequest(req);
+}
+
+void HttpAdapter::handleCommandRequestBody(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
+{
+  Log(DBG, "HttpAdapter::handleCommandRequest");
+  if (total > 0 && request->_tempObject == NULL) {
+    request->_tempObject = malloc(total);
+  }
+  if (request->_tempObject != NULL) {
+    memcpy((uint8_t*)(request->_tempObject) + index, data, len);
+  }
 }
 
 void HttpAdapter::handleCORSPreflightRequest(AsyncWebServerRequest *request)
