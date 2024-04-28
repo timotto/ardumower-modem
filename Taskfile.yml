@@ -81,6 +81,15 @@ tasks:
     - task: compile
       vars: {VARIANT: ESP_MODEM_TEST}
 
+  install-libraries:
+    silent: true
+    cmds:
+    - |
+      while read lib
+      do
+        arduino-cli lib install "$lib"
+      done < .libraries
+
   flash:
     cmds:
     - |
