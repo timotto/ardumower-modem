@@ -22,13 +22,13 @@ tar -zxf tool-task/task_linux_amd64.tar.gz -C bin
 cp tool-semver-bumper/semver-bumper-* bin/semver-bumper
 chmod +x bin/semver-bumper
 
-arduino-cli lib install AUnit@1.6.1
-arduino-cli lib install ArduinoJson@6.19.3
+arduino-cli lib install AUnit@1.7.1
+arduino-cli lib install ArduinoJson@6.21.5
 arduino-cli lib install ArduinoWebsockets@0.5.3
-arduino-cli lib install MQTT@2.5.0
-arduino-cli lib install NimBLE-Arduino@1.3.7
-arduino-cli lib install AsyncTCP@1.1.4
-arduino-cli lib install "ESP Async WebServer"@2.9.0
+arduino-cli lib install MQTT@2.5.2
+arduino-cli lib install NimBLE-Arduino@1.4.1
+arduino-cli lib install "Async TCP"@3.1.2
+arduino-cli lib install "ESP Async WebServer"@2.9.4
 
 cd ardumower-modem
 
