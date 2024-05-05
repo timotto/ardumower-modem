@@ -18,5 +18,4 @@ path_exclude:
 - README.md
 - .gitignore
 - .semver-bumper.conf.yaml
-- util/serial_test_runner
-- util/validation
+- util/
