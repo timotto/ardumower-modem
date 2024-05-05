@@ -332,19 +332,19 @@ void MowerAdapter::parseStateResponse(String line)
                          break;
                        
                        // incompatible to sunray upstream
-                       case 19:
+                       case 20:
                          _state.chargingMah = val.toFloat();
                          break;
-                       case 20:
+                       case 21:
                          _state.motorLeftMah = val.toFloat();
                          break;
-                       case 21:
+                       case 22:
                          _state.motorRightMah = val.toFloat();
                          break;
-                       case 22:
+                       case 23:
                          _state.motorMowMah = val.toFloat();
                          break;
-                       case 23:
+                       case 24:
                          _state.temperature = val.toFloat();
                          break;
                        }
