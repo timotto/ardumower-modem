@@ -71,6 +71,12 @@ namespace ArduMower
         new Reference<int>("ardumower_robot_gps_solution", "%d", &s->position.solution);
         new Reference<int>("ardumower_robot_gps_sat_visible", "%d", &s->position.visibleSatellites);
         new Reference<int>("ardumower_robot_gps_sat_visible_dgps", "%d", &s->position.visibleSatellitesDgps);
+
+        new Reference<float>("ardumower_robot_temperature", "%.2f", &s->temperature);
+        new Reference<float>("ardumower_robot_mah", "%.2f", &s->chargingMah, oneAttr(keyAttrType, "charge"));
+        new Reference<float>("ardumower_robot_mah", "%.2f", &s->motorMowMah, oneAttr(keyAttrType, "mow"));
+        new Reference<float>("ardumower_robot_mah", "%.2f", &s->motorLeftMah, oneAttr(keyAttrType, "left"));
+        new Reference<float>("ardumower_robot_mah", "%.2f", &s->motorRightMah, oneAttr(keyAttrType, "right"));
       }
 
       void registerRobotStatistics(ArduMower::Domain::Robot::Stats::Stats *s)

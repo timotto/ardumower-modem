@@ -330,6 +330,23 @@ void MowerAdapter::parseStateResponse(String line)
                        case 16:
                          _state.mapCrc = val.toInt();
                          break;
+                       
+                       // incompatible to sunray upstream
+                       case 19:
+                         _state.chargingMah = val.toFloat();
+                         break;
+                       case 20:
+                         _state.motorLeftMah = val.toFloat();
+                         break;
+                       case 21:
+                         _state.motorRightMah = val.toFloat();
+                         break;
+                       case 22:
+                         _state.motorMowMah = val.toFloat();
+                         break;
+                       case 23:
+                         _state.temperature = val.toFloat();
+                         break;
                        }
                      });
 

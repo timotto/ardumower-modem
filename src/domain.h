@@ -122,9 +122,14 @@ namespace ArduMower
           int sensor;
           float amps;
           int mapCrc;
+          float temperature;
+          float chargingMah;
+          float motorMowMah;
+          float motorLeftMah;
+          float motorRightMah;
 
           State()
-              : batteryVoltage(0), job(0), sensor(0), amps(0), mapCrc(0)
+              : batteryVoltage(0), job(0), sensor(0), amps(0), mapCrc(0), temperature(0), chargingMah(0), motorMowMah(0), motorLeftMah(0), motorRightMah(0)
           {
           }
 

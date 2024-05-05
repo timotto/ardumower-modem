@@ -29,6 +29,11 @@ testF(TestPrometheusAdapter, metrics_endpoint)
   mockMower._state.job = 4;
   mockMower._state.sensor = 0;
   mockMower._state.position.accuracy = 0.02;
+  mockMower._state.chargingMah = 12043.13;
+  mockMower._state.motorMowMah = 8911.13;
+  mockMower._state.motorLeftMah = 908.13;
+  mockMower._state.motorRightMah = 845.32;
+  mockMower._state.temperature = 28.72;
   mockMower._stats.freeMemory = 123458;
   mockMower._stats.mowDistanceTraveled = 12345.6;
   mockMower._stats.gpsJumps = 11;
@@ -65,6 +70,12 @@ testF(TestPrometheusAdapter, metrics_endpoint)
   assertStringContains(actualMetrics, "ardumower_robot_mowtime{position=\"fix\"} 1230\n");
   assertStringContains(actualMetrics, "ardumower_robot_mowtime{position=\"float\"} 4\n");
   assertStringContains(actualMetrics, "ardumower_robot_obstacles{type=\"gps_motion_low\"} 3\n");
+
+  assertStringContains(actualMetrics, "ardumower_robot_temperature 28.72\n");
+  assertStringContains(actualMetrics, "ardumower_robot_mah{type=\"charge\"} 12043.13\n");
+  assertStringContains(actualMetrics, "ardumower_robot_mah{type=\"mow\"} 8911.13\n");
+  assertStringContains(actualMetrics, "ardumower_robot_mah{type=\"left\"} 908.13\n");
+  assertStringContains(actualMetrics, "ardumower_robot_mah{type=\"right\"} 845.32\n");
 }
 
 // testbed

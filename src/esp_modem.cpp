@@ -1,5 +1,7 @@
 #include <Arduino.h>
 
+#define ESP_MODEM_TEST
+
 // used by the CMakeLists.txt file to create a different compile target for test execution
 #ifdef ESP_MODEM_TEST
 #define DEBUG_LEVEL DBG
