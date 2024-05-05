@@ -385,7 +385,7 @@ ArduMower::Domain::Robot::State::State TestMowerAdapter::givenAnATSResponseAndTh
 
 ArduMower::Domain::Robot::State::State TestMowerAdapter::givenACustomATSResponseAndTheExpectedState()
 {
-  String response = "S,28.12,-10.77,-4.55,2.62,1,2,11,0.05,0,-7.47,-6.46,0.02,36,-0.01,29,-26017,0x56,-1,0,28.73,12043.12,8911.12,908.12,845.33\r\n";
+  String response = "S,28.12,-10.77,-4.55,2.62,1,2,11,0.05,0,-7.47,-6.46,0.02,36,-0.01,29,-26017,0,-1,0,12043.12,908.12,845.33,8911.12,28.73,0xcc\r\n";
   fakeArduMowerOutput(response);
 
   ArduMower::Domain::Robot::State::State expected;
@@ -424,12 +424,22 @@ ArduMower::Domain::Robot::State::State TestMowerAdapter::givenACustomATSResponse
   expected.position.visibleSatellitesDgps = 29;
   // s += maps.mapCRC;
   expected.mapCrc = -26017;
-
+  // lateralError
+  // s += "0,";
+  // timetable
+  // s += "-1,0";
+  // incompatible to upstream Synray:
+  // s += battery.metricChargingMah;
   expected.chargingMah = 12043.12;
-  expected.motorMowMah = 8911.12;
+  // s += motor.metricMotorLeftMah;
   expected.motorLeftMah = 908.12;
+  // s += motor.metricMotorRightMah;
   expected.motorRightMah = 845.33;
+  // s += motor.metricMotorMowMah;
+  expected.motorMowMah = 8911.12;
+  // s += stateTemp;
   expected.temperature = 28.73;
+
 
   return expected;
 }
