@@ -19,13 +19,11 @@ const (
 
 var adapter = bluetooth.DefaultAdapter
 
-func init() {
+func BleValidationSuite(bed *testbed.Testbed) bool {
 	if err := adapter.Enable(); err != nil {
 		panic(err)
 	}
-}
 
-func BleValidationSuite(bed *testbed.Testbed) bool {
 	return Describe("Bluetooth LE", func() {
 		var deviceBluetoothName string
 		BeforeEach(func() {
