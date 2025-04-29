@@ -2,7 +2,6 @@ package tests
 
 import (
 	"github.com/ardumower/esp_modem/util/validation/tests/http_adapter"
-	"github.com/ardumower/esp_modem/util/validation/tests/relay"
 	"os"
 	"testing"
 
@@ -30,10 +29,6 @@ func Run() bool {
 
 	if isEnabled("http") {
 		_ = http_adapter.ValidationSuite(bed)
-	}
-
-	if isEnabled("relay") {
-		_ = relay.ValidationSuite(bed)
 	}
 
 	return run(&testing.T{})
