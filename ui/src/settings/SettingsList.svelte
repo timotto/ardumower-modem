@@ -10,7 +10,6 @@
   import { FrontendSettings as settings } from "../stores/frontend";
   import { BackendSettings as original } from "../stores/backend";
   import Reload from "./Reload.svelte";
-import Relay from "./Relay.svelte";
 
   let debug;
   $: debug = JSON.stringify($settings, null, 2);
@@ -34,10 +33,6 @@ import Relay from "./Relay.svelte";
       <BluetoothSettings
         bind:settings={$settings.bluetooth}
         bind:original={$original.bluetooth}
-      />
-      <Relay
-        bind:settings={$settings.relay}
-        bind:original={$original.relay}
       />
       <MqttSettings
         bind:settings={$settings.mqtt}

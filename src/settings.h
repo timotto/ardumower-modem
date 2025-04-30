@@ -108,24 +108,6 @@ namespace ArduMower
         virtual void stripSecrets(const JsonObject &o) const override;
       };
 
-      class Relay : public Group
-      {
-      public:
-        Relay() : enabled(false) {}
-
-        bool enabled;
-        String url;
-        String username;
-        String password;
-        uint32_t pingInterval;
-
-        bool valid(String & invalid) const;
-
-        virtual void marshal(const JsonObject &o) const override;
-        virtual bool unmarshal(const JsonObject &o) override;
-        virtual void stripSecrets(const JsonObject &o) const override;
-      };
-
       class MQTT : public Group
       {
       public:
@@ -165,7 +147,6 @@ namespace ArduMower
         Web web;
         WiFi wifi;
         Bluetooth bluetooth;
-        Relay relay;
         MQTT mqtt;
         Prometheus prometheus;
 

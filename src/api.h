@@ -18,28 +18,17 @@ namespace ArduMower
         virtual void clearPairings() = 0;
       };
 
-      class Relay {
-      public:
-        virtual bool isConnected() = 0;
-        virtual float pingRTT() = 0;
-        virtual int connectionCount() = 0;
-        virtual uint32_t connectionTime() = 0;
-        virtual float connectionDuration() = 0;
-      };
-
       class Api
       {
       public:
         OS & os;
         Bluetooth * ble;
-        Relay * relay;
 
         Api(OS & _os) : os(_os) {};
 
-        void begin(Bluetooth * _ble, Relay * _relay)
+        void begin(Bluetooth * _ble)
         {
           ble = _ble;
-          relay = _relay;
         }
       };
     }

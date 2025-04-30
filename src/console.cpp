@@ -250,12 +250,6 @@ void Console::printStatus()
             sta["ssid"] = String(reinterpret_cast<const char *>(confSta.sta.ssid));
             sta["ip"] = String(WiFi.localIP().toString().c_str());
           }
-
-          auto relay = status.createNestedObject("relay");
-          relay["connected"] = api.relay->isConnected();
-          relay["ping"] = api.relay->pingRTT();
-          relay["connections"] = api.relay->connectionCount();
-          relay["session"] = api.relay->connectionDuration();
         });
     return;
   }
@@ -304,17 +298,6 @@ void Console::printStatus()
         "  IP  : %s\r\n",
         wifiStaSsid.c_str(), wifiStaIp.c_str());
   }
-
-  io.printf(
-    "Relay:\r\n"
-    " Status     : %s\r\n"
-    " Ping       : %.1f ms\r\n"
-    " Session    : %.0f seconds\r\n"
-    " Connections: %d\r\n",
-    api.relay->isConnected() ? "connected" : "disconnected",
-    api.relay->pingRTT() * 1000.0,
-    api.relay->connectionDuration(),
-    api.relay->connectionCount());
 
 }
 

@@ -105,12 +105,6 @@ void UiAdapter::handleApiGetModemStatus(AsyncWebServerRequest *request)
   const JsonObject &root = response->getRoot();
   root["uptime"] = millis();
 
-  root["relay_connected"] = _api.relay->isConnected();
-  root["relay_connect_count"] = _api.relay->connectionCount();
-  root["relay_connect_time"] = _api.relay->connectionTime();
-  root["relay_connection_duration"] = _api.relay->connectionDuration();
-  root["relay_rtt"] = _api.relay->pingRTT();
-  
   response->setLength();
   request->send(response);
 }

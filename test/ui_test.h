@@ -10,7 +10,7 @@ using namespace aunit;
 
 const asset_t *lookupAsset(const char *path);
 
-class TestUiAdapter : public TestOnce, public ArduMower::Modem::Api::Bluetooth, public ArduMower::Modem::Api::Relay
+class TestUiAdapter : public TestOnce, public ArduMower::Modem::Api::Bluetooth
 {
 public:
   ArduMower::Modem::Http::UiAdapter *uut;
@@ -27,17 +27,11 @@ public:
   HTTPClient http;
 
   int bluetoothResetCount;
-  bool isConnectedValue;
 
   void setup() override;
   void teardown() override;
 
   virtual void clearPairings() override;
-  virtual bool isConnected() override;
-  virtual float pingRTT() override;
-  virtual int connectionCount() override;
-  virtual uint32_t connectionTime() override;
-  virtual float connectionDuration() override;
 };
 
 testF(TestUiAdapter, get_root_returns_index_html_gz)
@@ -74,28 +68,6 @@ testF(TestUiAdapter, get_api_modem_info)
   assertNotEqual(-1, responseBody.indexOf("uptime"));
   assertNotEqual(-1, responseBody.indexOf("git_hash"));
   assertNotEqual(-1, responseBody.indexOf(git_hash));
-}
-
-testF(TestUiAdapter, get_api_modem_status)
-{
-  http.begin(net, "http://localhost:8080/api/modem/status");
-  assertTrue(http.GET());
-  String responseBody = http.getString();
-
-  assertNotEqual(-1, responseBody.indexOf("relay_connected"));
-  assertNotEqual(-1, responseBody.indexOf("false"));
-  assertEqual(-1, responseBody.indexOf("true"));
-
-
-  isConnectedValue = true;
-
-  http.begin(net, "http://localhost:8080/api/modem/status");
-  assertTrue(http.GET());
-  responseBody = http.getString();
-
-  assertNotEqual(-1, responseBody.indexOf("relay_connected"));
-  assertNotEqual(-1, responseBody.indexOf("true"));
-  assertEqual(-1, responseBody.indexOf("false"));
 }
 
 testF(TestUiAdapter, get_api_modem_settings)
@@ -245,13 +217,12 @@ const asset_t *lookupAsset(const char *path)
 void TestUiAdapter::setup()
 {
   bluetoothResetCount = 0;
-  isConnectedValue = false;
 
   indexHtml = lookupAsset("/index.html");
   assertTrue(indexHtml != nullptr);
 
   api = new ArduMower::Modem::Api::Api(fakeOs);
-  api->begin(this, this);
+  api->begin(this);
   settings = testModemSettings();
 
   server = new AsyncWebServer(8080);
@@ -275,29 +246,4 @@ void TestUiAdapter::teardown()
 void TestUiAdapter::clearPairings()
 {
   bluetoothResetCount++;
-}
-
-bool TestUiAdapter::isConnected()
-{
-  return isConnectedValue;
-}
-
-float TestUiAdapter::pingRTT()
-{
-  return 0;
-}
-
-int TestUiAdapter::connectionCount()
-{
-  return 0;
-}
-
-uint32_t TestUiAdapter::connectionTime()
-{
-  return 0;
-}
-
-float TestUiAdapter::connectionDuration()
-{
-  return 0;
 }

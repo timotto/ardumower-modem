@@ -171,7 +171,6 @@ const stripFillers = (s: Settings, original: Settings) => {
   s.wifi.has_ap_psk = s.wifi.ap_psk !== original.wifi.ap_psk
   s.bluetooth.has_pin = s.bluetooth.pin !== original.bluetooth.pin
   s.mqtt.has_password = s.mqtt.password !== original.mqtt.password
-  s.relay.has_password = s.relay.password !== original.relay.password
 }
 
 const fillSecrets = (s: Settings) => {
@@ -192,9 +191,6 @@ const fillSecrets = (s: Settings) => {
 
   if (s.mqtt.has_password) s.mqtt.password = secretFiller()
   else s.mqtt.password = ''
-
-  if (s.relay.has_password) s.relay.password = secretFiller()
-  else s.relay.password = ''
 }
 
 export interface ErrorDetails {

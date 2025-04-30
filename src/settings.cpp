@@ -16,7 +16,6 @@ const char * _t_general = "general";
 const char * _t_web = "web";
 const char * _t_wifi = "wifi";
 const char * _t_bluetooth = "bluetooth";
-const char * _t_relay = "relay";
 const char * _t_mqtt = "mqtt";
 const char * _t_prometheus = "prometheus";
 
@@ -133,7 +132,7 @@ bool Settings::save()
 
 bool Settings::valid(String &invalid) const
 {
-  return general.valid(invalid) && web.valid(invalid) && wifi.valid(invalid) && relay.valid(invalid) && mqtt.valid(invalid);
+  return general.valid(invalid) && web.valid(invalid) && wifi.valid(invalid) && mqtt.valid(invalid);
 }
 
 void Settings::marshal(const JsonObject &o) const
@@ -143,7 +142,6 @@ void Settings::marshal(const JsonObject &o) const
   web.marshal(o.createNestedObject(_t_web));
   wifi.marshal(o.createNestedObject(_t_wifi));
   bluetooth.marshal(o.createNestedObject(_t_bluetooth));
-  relay.marshal(o.createNestedObject(_t_relay));
   mqtt.marshal(o.createNestedObject(_t_mqtt));
   prometheus.marshal(o.createNestedObject(_t_prometheus));
 }
@@ -175,7 +173,6 @@ bool Settings::unmarshal(const JsonObject &o)
   mustContainAndSucceed("Settings", o, _t_web, web.unmarshal(o[_t_web]));
   mustContainAndSucceed("Settings", o, _t_wifi, wifi.unmarshal(o[_t_wifi]));
   mustContainAndSucceed("Settings", o, _t_bluetooth, bluetooth.unmarshal(o[_t_bluetooth]));
-  mustContainAndSucceed("Settings", o, _t_relay, relay.unmarshal(o[_t_relay]));
   mustContainAndSucceed("Settings", o, _t_mqtt, mqtt.unmarshal(o[_t_mqtt]));
   mustContainAndSucceed("Settings", o, _t_prometheus, prometheus.unmarshal(o[_t_prometheus]));
 
@@ -188,7 +185,6 @@ void Settings::stripSecrets(const JsonObject &o) const
   web.stripSecrets(o[_t_web]);
   wifi.stripSecrets(o[_t_wifi]);
   bluetooth.stripSecrets(o[_t_bluetooth]);
-  relay.stripSecrets(o[_t_relay]);
   mqtt.stripSecrets(o[_t_mqtt]);
   prometheus.stripSecrets(o[_t_prometheus]);
 }
@@ -443,45 +439,6 @@ static bool validIpAddress(const String &address)
     return false;
 
   return true;
-}
-
-bool Relay::valid(String &invalid) const
-{
-  // if (!enabled)
-    return true;
-
-  // if (!validUrl(url))
-  //   invalid = "relay.url";
-  // else
-  //   return true;
-
-  // return false;
-}
-
-void Relay::marshal(const JsonObject &o) const
-{
-  o[_t_enabled] = enabled;
-  o[_t_url] = url;
-  o[_t_username] = username;
-  o[_t_password] = password;
-  o[_t_ping_interval] = pingInterval;
-}
-
-bool Relay::unmarshal(const JsonObject &o)
-{
-  enabled = o[_t_enabled];
-  url = o[_t_url].as<String>();
-  username = o[_t_username].as<String>();
-  if (containsAndHas(o, _t_password, _t_has_password))
-    password = o[_t_password].as<String>();
-  pingInterval = o[_t_ping_interval];
-
-  return true;
-}
-
-void Relay::stripSecrets(const JsonObject &o) const
-{
-  stripSecret(o, _t_password, _t_has_password);
 }
 
 bool MQTT::valid(String &invalid) const
